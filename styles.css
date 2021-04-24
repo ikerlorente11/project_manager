@@ -1,0 +1,335 @@
+*, *::after, *::before{
+    box-sizing: border-box;
+}
+
+body{
+    height: 100vh;
+    background-color: black;
+}
+
+.m-auto{
+    margin: auto;
+}
+
+.green{
+    color: green;
+}
+
+.red{
+    color: rgb(165, 0, 0);
+}
+
+.container{
+    height: fit-content;
+    width: 100%;
+    margin: auto;
+    max-width: 300px;
+    color: white;
+    max-height: 100vh;
+    overflow: auto;
+}
+
+.data{
+    display: grid;
+    grid-template-columns: 1fr 1fr .4fr;
+    grid-template-rows: 1fr;
+    grid-template-areas:
+      "data1 data2 newLesson";
+    margin-bottom: 10px;
+    border-radius: 7px;
+    background-color: rgb(59, 59, 59);
+}
+
+.data1{
+    display: flex;
+    align-items: center;
+    font-size: 1.8rem;
+    border-right: 1px solid black;
+    cursor: pointer;
+}
+
+.data2{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+      "subdata"
+      "subdata";
+    border-right: 1px solid black;
+    cursor: pointer;
+}
+
+.subdata{
+    display: flex;
+    align-items: center;
+    font-size: 1.4rem;
+}
+
+.newLesson{
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.newLesson img{
+    max-width: 22px;
+    margin: auto;
+}
+
+#overlay{
+    position: fixed;
+    opacity: 0;
+    transition: 200ms ease-in-out;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .5);
+    pointer-events: none;
+}
+
+#overlay.active{
+    opacity: 1;
+    pointer-events: all;
+}
+
+.history{
+    position: fixed;
+    height: 100vh;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, 0) scale(0);
+    transition: 200ms ease-in-out;
+    border: 1px solid black;
+    z-index: 1000;
+    background-color: black;
+    width: 100%;
+    max-width: 300px;
+    padding: 10px 10px 0 10px;
+    max-height: 100vh;
+    overflow: auto;
+}
+
+.history.active{
+    transform: translate(-50%, 0) scale(1);
+}
+
+.historyData{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas:
+      "date time";
+    color: white;
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    border-radius: 7px;
+    background-color: rgb(59, 59, 59);
+    cursor: pointer;
+}
+
+.selected{
+    background-color:white;
+    color: black;
+}
+
+p{
+    margin: 10px;
+}
+
+.historyData .date{
+    border-right: 1px solid black;
+}
+
+.options{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+      "pay delete"
+      "cancelHistory cancelHistory";
+    color: white;
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    border-radius: 7px;
+    background-color: rgb(59, 59, 59);
+    cursor: pointer;
+}
+
+#cancelHistory{
+    border-top: 1px solid black;
+    grid-area: cancelHistory;
+    display: flex;
+    align-items: center;
+}
+
+.pay{
+    border-right: 1px solid black;
+}
+
+.addLesson{
+    display: flex;
+    align-items: center;
+    position: fixed;
+    height: 100vh;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, 0) scale(0);
+    transition: 200ms ease-in-out;
+    z-index: 1000;
+    width: 100%;
+    max-width: 300px;
+    padding: 10px 10px 0 10px;
+    max-height: 100vh;
+    overflow: auto;
+}
+
+.addLesson.active{
+    transform: translate(-50%, 0) scale(1);
+}
+
+.lessonForm{
+    height: fit-content;
+    width: 100%;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: .8fr .8fr 1fr 1fr;
+    grid-template-areas:
+      "lessonDate lessonDate lessonDate"
+      "lessonTime lessonTime lessonTime"
+      "hour halfAndHour twoHours"
+      "buttons buttons buttons";
+    grid-gap: .3rem;
+    color: white;
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    border-radius: 7px;
+    background-color: rgb(59, 59, 59);
+    align-items: center;
+    cursor: pointer;
+}
+
+.lessonDate{
+    height: fit-content;
+    grid-area: lessonDate;
+    border-style: none;
+    font-size: 1.2rem;
+    padding: .4rem;
+    border-radius: 5px;
+}
+
+.lessonTime{
+    height: fit-content;
+    grid-area: lessonTime;
+    border-style: none;
+    font-size: 1.2rem;
+    padding: .4rem;
+    border-radius: 5px;
+}
+
+.buttons{
+    grid-area: buttons;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas:
+      "accept cancel";
+      margin-top: 10px;
+}
+
+.buttons div{
+    display: flex;
+    align-items: center;
+    margin: auto;
+    background-color: rgb(39, 39, 39);
+    padding: 10px 15px;
+    border-radius: 10px;
+}
+
+.times{
+    background-color: grey;
+    border-radius: 10px;
+    padding: 0.5rem;
+    width: 90%;
+    margin: auto;
+}
+
+.newStudentBtn{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: auto;
+    max-width: 300px;
+    color: white;
+}
+
+.newStudentBtn div{
+    font-size: 1.5rem;
+    padding: 15px;
+    margin: 10px auto;
+    background-color: rgb(59, 59, 59);
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.newStudent{
+    display: flex;
+    align-items: center;
+    position: fixed;
+    height: 100vh;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, 0) scale(0);
+    transition: 200ms ease-in-out;
+    z-index: 1000;
+    width: 100%;
+    max-width: 300px;
+    padding: 10px 10px 0 10px;
+    max-height: 100vh;
+    overflow: auto;
+}
+
+.newStudent.active{
+    transform: translate(-50%, 0) scale(1);
+}
+
+.studentForm{
+    height: fit-content;
+    width: 100%;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: .8fr .8fr 1fr;
+    grid-template-areas:
+      "studentName"
+      "lessonPrice"
+      "buttons";
+    grid-gap: .3rem;
+    color: white;
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    border-radius: 7px;
+    background-color: rgb(59, 59, 59);
+    align-items: center;
+    cursor: pointer;
+}
+
+.studentName{
+    border-style: none;
+    font-size: 1.2rem;
+    padding: .4rem;
+    border-radius: 5px;
+}
+
+.lessonPrice{
+    border-style: none;
+    font-size: 1.2rem;
+    padding: .4rem;
+    border-radius: 5px;
+}

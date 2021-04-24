@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="js/model.js" defer></script>
+    <script src="js/script.js" defer></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="container" class="container">
+    </div>
+    <div class="newStudentBtn">
+        <div id="newStudentBtn">Nuevo alumno</div>
+    </div>
+    <div id="history" class="history">
+        <div>X</div>
+        <div class="options">
+            <div id="pay" class="pay"><p>Pagado</p></div>
+            <div id="delete" class="delete"><p>Eliminar</p></div>
+            <div id="cancelHistory" class="cancel"><p class="m-auto">Cancelar</p></div>
+        </div>
+    </div>
+    <div id="addLesson" class="addLesson">
+        <div class="lessonForm">
+            <input id="lessonDate" type="date" class="lessonDate">
+            <input id="lessonTime" type="number" class="lessonTime" placeholder="Minutos" value=60>
+            <div id="hour" class="times hour">60</div>
+            <div id="halfAndHour" class="times halfAndHour">90</div>
+            <div id="twoHours" class="times twoHours">120</div>
+            <div class="lessonButtons buttons">
+                <div id="acceptLesson" class="accept">Guardar</div>
+                <div id="cancelLesson" class="cancel">Cancelar</div>
+            </div>
+        </div>
+    </div>
+    <div id="newStudent" class="newStudent">
+        <div class="studentForm">
+            <input id="studentName" type="text" class="studentName" placeholder="Nombre">
+            <input id="lessonPrice" type="number" class="lessonPrice" placeholder="Precio" value=12>
+            <div class="studentButtons buttons">
+                <div id="acceptStudent" class="accept">Guardar</div>
+                <div id="cancelStudent" class="cancel">Cancelar</div>
+            </div>
+        </div>
+    </div>
+    <div id="overlay"></div>
+</body>
+</html>
