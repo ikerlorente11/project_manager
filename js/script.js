@@ -1,10 +1,12 @@
 let students;
+let deletionList;
 
 const container = document.getElementById("container");
 const overlay = document.getElementById('overlay');
 const history = document.getElementById('history');
 const addLesson = document.getElementById('addLesson');
 const newStudent = document.getElementById('newStudent');
+const messages = document.querySelectorAll('.message');
 
 overlay.addEventListener('click', () =>{
     overlay.classList.remove("active");
@@ -156,6 +158,7 @@ let createRow = (student) => {
     data2.addEventListener("click", () =>{
         overlay.classList.add('active');
         removeElements( document.querySelectorAll(".historyData") );
+        deletionList = [];
         student.lessons.forEach(lesson =>{
             history.appendChild(createHistory(lesson));
         })
@@ -165,6 +168,17 @@ let createRow = (student) => {
             loadData();
             overlay.classList.remove("active");
             history.classList.remove("active");
+        })
+        document.getElementById('delete').addEventListener('click', () =>{
+            deleteLessons(student);
+
+            removeElements( document.querySelectorAll(".historyData") );
+            deletionList = [];
+            student.lessons.forEach(lesson =>{
+                history.appendChild(createHistory(lesson));
+            })
+
+            loadData();
         })
         history.classList.add('active');
     });
@@ -207,14 +221,61 @@ const createHistory = (lesson) => {
     historyData.classList.add("historyData");
     historyData.appendChild(dateCont);
     historyData.appendChild(timeCont);
+    
+    let t0;
+    let setint  = '';
+    historyData.addEventListener('mousedown', () => {
+        clearInterval(setint);
+        t0 = performance.now();
+        setint = setInterval(function () {
+            console.log(deletionList);
+            if(performance.now() - t0 > 300){
+                var index = deletionList.indexOf(lesson);
+                if (index > -1) {
+                    deletionList.splice(index, 1);
+                }else{
+                    deletionList.push(lesson);
+                }
+                historyData.classList.toggle("selected");
+                clearInterval(setint);
+            }
+        },50);
+    });
 
-    historyData.addEventListener('mousedown', () => { 
-        setTimeout(function() {
-            historyData.classList.toggle("selected");
-        }, 500);
+    historyData.addEventListener('mouseup', () => { 
+        clearInterval(setint);
     });
 
     return historyData;
+}
+
+const deleteLessons = (student) => {
+    if(deletionList.length > 0){
+        let errors = 0;
+        deletionList.forEach(deletion => {
+            var index = student.lessons.indexOf(deletion);
+            if (index > -1) {
+                student.lessons.splice(index, 1);
+            }else{
+                errors++;
+            }
+        })
+        if(errors > 0){
+            document.getElementById('message').innerHTML = 'No se han borrado todos los elementos';
+            message.classList.add('messageWrong');
+        }else{
+            document.getElementById('message').innerHTML = 'Elementos borrados';
+            message.classList.add('messageSucssess');
+            saveData();
+        }
+    }else{
+        document.getElementById('message').innerHTML = 'No has seleccionado nada';
+        message.classList.add('messageWrong');
+    }
+
+    messages.forEach(message => {
+        message.classList.add('faceinout');
+    })
 }
 
 const reducer = (accumulator, currentValue) => {
@@ -239,6 +300,14 @@ const secToTime = (min) =>{
 
     return(hr + "h " + min + "m");
 }
+
+messages.forEach(message => {
+    message.addEventListener('animationend', () => {
+        message.classList.remove('faceinout');
+        message.classList.remove('messageSucssess');
+        message.classList.remove('messageWrong');
+    })
+})
 
 loadData();
 
