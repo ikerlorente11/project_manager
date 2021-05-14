@@ -1,5 +1,6 @@
 let students;
 let deletionList;
+let selectedStudent;
 
 const container = document.getElementById("container");
 const overlay = document.getElementById('overlay');
@@ -13,6 +14,25 @@ overlay.addEventListener('click', () =>{
     history.classList.remove("active");
     addLesson.classList.remove("active");
     newStudent.classList.remove("active");
+})
+
+document.getElementById('pay').addEventListener('click', () =>{
+    selectedStudent.payLessons();
+    saveData();
+    loadData();
+    overlay.classList.remove("active");
+    history.classList.remove("active");
+})
+document.getElementById('delete').addEventListener('click', () =>{
+    deleteLessons(selectedStudent);
+
+    removeElements( document.querySelectorAll(".historyData") );
+    deletionList = [];
+    selectedStudent.lessons.forEach(lesson =>{
+        history.appendChild(createHistory(lesson));
+    })
+
+    loadData();            
 })
 
 document.getElementById('cancelHistory').addEventListener('click', () =>{
@@ -162,24 +182,7 @@ let createRow = (student) => {
         student.lessons.forEach(lesson =>{
             history.appendChild(createHistory(lesson));
         })
-        document.getElementById('pay').addEventListener('click', () =>{
-            student.payLessons();
-            saveData();
-            loadData();
-            overlay.classList.remove("active");
-            history.classList.remove("active");
-        })
-        document.getElementById('delete').addEventListener('click', () =>{
-            deleteLessons(student);
-
-            removeElements( document.querySelectorAll(".historyData") );
-            deletionList = [];
-            student.lessons.forEach(lesson =>{
-                history.appendChild(createHistory(lesson));
-            })
-
-            loadData();
-        })
+        selectedStudent = student;
         history.classList.add('active');
     });
 
@@ -222,34 +225,21 @@ const createHistory = (lesson) => {
     historyData.appendChild(dateCont);
     historyData.appendChild(timeCont);
     
-    let t0;
-    let setint  = '';
-    historyData.addEventListener('mousedown', () => {
-        clearInterval(setint);
-        t0 = performance.now();
-        setint = setInterval(function () {
-            console.log(deletionList);
-            if(performance.now() - t0 > 300){
-                var index = deletionList.indexOf(lesson);
-                if (index > -1) {
-                    deletionList.splice(index, 1);
-                }else{
-                    deletionList.push(lesson);
-                }
-                historyData.classList.toggle("selected");
-                clearInterval(setint);
-            }
-        },50);
-    });
-
-    historyData.addEventListener('mouseup', () => { 
-        clearInterval(setint);
+    historyData.addEventListener('click', () => {
+        var index = deletionList.indexOf(lesson);
+        if (index > -1) {
+            deletionList.splice(index, 1);
+        }else{
+            deletionList.push(lesson);
+        }
+        historyData.classList.toggle("selected");
     });
 
     return historyData;
 }
 
 const deleteLessons = (student) => {
+    console.log(deletionList.length);
     if(deletionList.length > 0){
         let errors = 0;
         deletionList.forEach(deletion => {
@@ -310,8 +300,3 @@ messages.forEach(message => {
 })
 
 loadData();
-
-// students.forEach(student => {
-//     student.order();
-// })
-// console.log(students);
