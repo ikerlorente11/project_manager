@@ -1,11 +1,13 @@
 class student{
     name;
     priceHour;
+    active;
     lessons;
 
-    constructor(name, priceHour){
+    constructor(name, priceHour, active){
         this.name = name;
         this.priceHour = priceHour;
+        this.active = active;
         this.lessons = [];
     }
 
@@ -21,6 +23,10 @@ class student{
 
     order(){
         this.lessons.sort((a, b) => (a.date < b.date) ? 1 : -1);
+    }
+
+    delete(){
+        this.active = 0;
     }
 }
 

@@ -238,23 +238,55 @@ p{
     border-radius: 5px;
 }
 
-.buttons{
+.buttons.add{
     grid-area: buttons;
     display: grid;
+    row-gap: .25rem;
+    column-gap: .25rem;
+    margin-top: 10px;
+}
+
+#newStudent.add .buttons{
+    grid-area: buttons;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr;
-    grid-template-areas:
-      "accept cancel";
-      margin-top: 10px;
+    grid-template-areas: "accept cancel";
+}
+
+#newStudent.update .buttons{
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: "update cancel" "remove remove";
+}
+
+#newStudent.add .update, #newStudent.add .remove{
+    display: none;
+}
+
+#newStudent.update .accept{
+    display: none;
+}
+
+.buttons .accept{
+    grid-area: accept;
+}
+.buttons .cancel{
+    grid-area: cancel;
+}
+.buttons .update{
+    grid-area: update;
+}
+.buttons .remove{
+    grid-area: remove;
 }
 
 .buttons div{
     display: flex;
     align-items: center;
-    margin: auto;
     background-color: rgb(39, 39, 39);
     padding: 10px 15px;
     border-radius: 10px;
+    justify-content: center;
 }
 
 .times{
@@ -310,12 +342,12 @@ p{
     padding: 15px;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: .8fr .8fr 1fr;
+    grid-template-rows: auto auto 1fr;
     grid-template-areas:
       "studentName"
       "lessonPrice"
       "buttons";
-    grid-gap: .3rem;
+    row-gap: 1rem;
     color: white;
     text-align: center;
     font-size: 1.5rem;
@@ -323,6 +355,9 @@ p{
     border-radius: 7px;
     background-color: rgb(59, 59, 59);
     align-items: center;
+}
+
+.studentForm .btn{
     cursor: pointer;
 }
 

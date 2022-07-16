@@ -50,9 +50,28 @@ document.getElementById('newStudentBtn').addEventListener('click', () =>{
     document.getElementById('studentName').value = "";
     overlay.classList.add('active');
     newStudent.classList.add('active');
+    newStudent.classList.add('add');
+    newStudent.classList.remove('update');
 })
 
 document.getElementById('cancelStudent').addEventListener('click', () =>{
+    overlay.classList.remove("active");
+    newStudent.classList.remove("active");
+})
+
+document.getElementById('updateStudent').addEventListener('click', () =>{
+    selectedStudent.name = document.getElementById('studentName').value;
+    selectedStudent.priceHour = document.getElementById('lessonPrice').value;
+    saveData();
+    loadData();
+    overlay.classList.remove("active");
+    newStudent.classList.remove("active");
+})
+
+document.getElementById('removeStudent').addEventListener('click', () =>{
+    selectedStudent.active = 0;
+    saveData();
+    loadData();
     overlay.classList.remove("active");
     newStudent.classList.remove("active");
 })
@@ -68,7 +87,7 @@ document.getElementById('twoHours').addEventListener('click', () =>{
 })
 
 document.getElementById('acceptStudent').addEventListener('click', () =>{
-    students.push(new student(document.getElementById('studentName').value, document.getElementById('lessonPrice').value));
+    students.push(new student(document.getElementById('studentName').value, document.getElementById('lessonPrice').value, 1));
     saveData();
     loadData();
     overlay.classList.remove('active');
@@ -88,15 +107,21 @@ let loadData = () => {
             if(result != "null" && result != "false"){
                 objects = JSON.parse(result);
                 objects.forEach(object => {
-                    let stud = new student(object.name, object.priceHour);
-                    object.lessons.forEach(less => {
-                        stud.addLesson(new lesson(less.date, less.time, less.paid));
-                    })
+                    let stud = new student(object.name, object.priceHour, object.active);
+                    
+                    if(stud.active == 1){
+                        object.lessons.forEach(less => {
+                            stud.addLesson(new lesson(less.date, less.time, less.paid));
+                        })
+                    }
+
                     students.push(stud);
                 });
                 
                 students.forEach(student => {
-                    container.appendChild(createRow(student));
+                    if(student.active == 1){
+                        container.appendChild(createRow(student));
+                    }
                 });
             }else{
                 console.log("Has been an error on load data");
@@ -194,6 +219,15 @@ let createRow = (student) => {
     var data1 = document.createElement("div");
     data1.classList.add("data1");
     data1.appendChild(name);
+    data1.addEventListener("click", () =>{
+        document.getElementById('lessonPrice').value = student.priceHour;
+        document.getElementById('studentName').value = student.name;
+        overlay.classList.add('active');
+        newStudent.classList.add('active');
+        newStudent.classList.add('update');
+        newStudent.classList.remove('add');
+        selectedStudent = student;
+    });
 
     var data = document.createElement("div");
     data.classList.add("data");
