@@ -238,7 +238,7 @@ p{
     border-radius: 5px;
 }
 
-.buttons.add{
+.buttons.add, #addLesson .buttons{
     grid-area: buttons;
     display: grid;
     row-gap: .25rem;
@@ -246,7 +246,7 @@ p{
     margin-top: 10px;
 }
 
-#newStudent.add .buttons{
+#newStudent.add .buttons, #addLesson .buttons{
     grid-area: buttons;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr;
