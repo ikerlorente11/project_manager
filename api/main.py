@@ -11,7 +11,12 @@ from typing import Optional
 app = FastAPI()
 
 # Permitted origins
-origins = ['http://localhost:4321']
+origins = [
+    'http://localhost:4321',
+    'http://localhost:3000',
+    'http://gestor_clases_front:3000',
+    'http://gestor_clases_front:4321',
+]
 
 app.add_middleware(
     CORSMiddleware,

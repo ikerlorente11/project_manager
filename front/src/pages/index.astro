@@ -3,8 +3,10 @@ import Student from "../components/Student.astro";
 import Button from "../components/Button.astro";
 import Layout from "../layouts/Layout.astro";
 
+const API_BASE_URL = import.meta.env.API_BASE_URL;
+
 // Hacer la petición al backend para obtener los estudiantes
-const response = await fetch("http://localhost:8000/students");
+const response = await fetch(`${API_BASE_URL}/students`);
 const students = await response.json();
 ---
 

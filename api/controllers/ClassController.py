@@ -68,6 +68,8 @@ def updateClass(id: int, class_data):
     if not class_obj:
         raise HTTPException(status_code=404, detail="Class not found")
     
+    print('pagado: ' + str(class_data.paid))
+    
     # Update class values
     if class_data.date:
         class_obj.date = class_data.date
@@ -75,7 +77,7 @@ def updateClass(id: int, class_data):
         class_obj.time = class_data.time
     if class_data.price:
         class_obj.price = class_data.price
-    if class_data.paid:
+    if class_data.paid != None:
         class_obj.paid = class_data.paid
     if class_data.student_id:
         class_obj.student_id = class_data.student_id

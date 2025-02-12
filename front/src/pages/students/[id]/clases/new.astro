@@ -11,8 +11,10 @@ const { id } = Astro.params;
 
 let student = null;
 
+const API_BASE_URL = import.meta.env.API_BASE_URL;
+
 try {
-    const response = await fetch(`http://localhost:8000/students?id=${id}`);
+    const response = await fetch(`${API_BASE_URL}/students?id=${id}`);
     if (response.ok) {
         student = await response.json();
     } else {

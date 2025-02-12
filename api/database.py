@@ -23,7 +23,7 @@ class Student(db.Model):
     price = db.Column(db.Integer)
 
     # Relación con la tabla Classes (one-to-many)
-    classes = db.relationship('Class', backref='student', lazy=True)
+    classes = db.relationship('Class', backref='student', lazy=True, cascade="all, delete-orphan")
 
 # Classes table
 class Class(db.Model):
@@ -34,7 +34,7 @@ class Class(db.Model):
     paid = db.Column(db.Boolean)
 
     # Relación con Student (many-to-one)
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"), nullable=False)
 
 # SEEDERS
 def seed():

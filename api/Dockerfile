@@ -9,7 +9,7 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 # Copia los archivos necesarios al contenedor
-COPY ./api .
+COPY . .
 
 # Expón el puerto 8000
 EXPOSE 8000

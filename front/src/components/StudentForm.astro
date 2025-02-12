@@ -1,11 +1,13 @@
 ---
 import Button from "./Button.astro";
 
+const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL;
+
 const { student } = Astro.props;
 const method = student ? "PUT" : "POST";
 const url = student
-    ? `http://localhost:8000/students/${student.id}`
-    : "http://localhost:8000/students";
+    ? `${API_BASE_URL}/students/${student.id}`
+    : `${API_BASE_URL}/students`;
 ---
 
 <form id="studentForm" method={method} action={url}>
@@ -77,34 +79,39 @@ const url = student
         });
 
     document.addEventListener("DOMContentLoaded", function () {
-        document
-            .getElementById("deleteUser")
-            .addEventListener("click", async function () {
-                const id = this.getAttribute("data_id");
-                try {
-                    const response = await fetch(
-                        `http://localhost:8000/students/${id}`,
-                        {
-                            method: "DELETE",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                        },
-                    );
+        if (document.getElementById("deleteUser")) {
+            document
+                .getElementById("deleteUser")
+                .addEventListener("click", async function () {
+                    const id = this.getAttribute("data_id");
+                    try {
+                        const apiBaseUrl =
+                            document.body.getAttribute("data-api-base-url");
 
-                    if (response.ok) {
-                        console.log("Usuario eliminado exitosamente.");
-                        window.location.href = "/";
-                    } else {
-                        console.error(
-                            "Error al eliminar usuario:",
-                            await response.text(),
+                        const response = await fetch(
+                            `${apiBaseUrl}/students/${id}`,
+                            {
+                                method: "DELETE",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                            },
                         );
+
+                        if (response.ok) {
+                            console.log("Usuario eliminado exitosamente.");
+                            window.location.href = "/";
+                        } else {
+                            console.error(
+                                "Error al eliminar usuario:",
+                                await response.text(),
+                            );
+                        }
+                    } catch (error) {
+                        console.error("Error en la petición:", error);
                     }
-                } catch (error) {
-                    console.error("Error en la petición:", error);
-                }
-            });
+                });
+        }
     });
 </script>
 

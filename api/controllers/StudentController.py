@@ -94,6 +94,7 @@ def removeStudent(id: int):
         tuple: A dictionary with a success or error message and the HTTP status code.
     """
     # Search student in database
+    print('Estudiante: ' + str(id))
     student = Student.query.get(id)
     if not student:
         raise HTTPException(status_code=404, detail=f"Estudiante con ID {id} no encontrado")
