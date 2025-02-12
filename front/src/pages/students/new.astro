@@ -1,0 +1,22 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import StudentForm from "../../components/StudentForm.astro";
+import Header from "../../components/Header.astro";
+import Back from "../../components/Back.astro";
+---
+
+<Layout>
+    <Back url="/" />
+    <Header name={""} price={""} />
+    <StudentForm />
+</Layout>
+<style>
+    .back-button {
+        position: absolute;
+        color: var(--color-primary);
+    }
+
+    .back-button svg {
+        margin-top: 0.5rem;
+    }
+</style>

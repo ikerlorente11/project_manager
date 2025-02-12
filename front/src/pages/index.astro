@@ -1,0 +1,32 @@
+---
+import Student from "../components/Student.astro";
+import Button from "../components/Button.astro";
+import Layout from "../layouts/Layout.astro";
+
+// Hacer la petición al backend para obtener los estudiantes
+const response = await fetch("http://localhost:8000/students");
+const students = await response.json();
+---
+
+<Layout>
+	<div class="students">
+		{students.map((student) => <Student {...student} />)}
+	</div>
+	<Button
+		url="/students/new"
+		text="Nuevo usuario"
+		type="default"
+		css="mb-1 mt-1"
+	/>
+</Layout>
+
+<style>
+	.students {
+		display: flex;
+		flex-direction: column;
+		margin-top: 1.5rem;
+		gap: 0.8rem;
+		flex-grow: 1;
+		overflow-y: overlay;
+	}
+</style>

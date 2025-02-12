@@ -1,0 +1,61 @@
+---
+const { id, user_id, date, time, price, paid } = Astro.props;
+
+const type = paid ? "paid" : "unpaid";
+const hour = Math.trunc(time / 60);
+const minutes = time - hour * 60;
+---
+
+<a href=`/students/${user_id}/clases/edit/${id}` class={`registry ${type}`}>
+    <span>{date}</span>
+    <span>{price}€</span>
+    <span>{hour}h {minutes}m</span>
+    <span>{(price * (time / 60)).toFixed(2)}€</span>
+</a>
+
+<style>
+    .registry {
+        color: var(--color-primary);
+        max-width: 98%;
+        width: 350px;
+        margin: 0 auto;
+        border-radius: 5px;
+        padding: 0.3rem 0;
+        font-size: 1.2rem;
+        font-weight: 500;
+        display: flex;
+        justify-content: space-evenly;
+        transition: transform 200ms;
+    }
+
+    .registry:hover {
+        cursor: pointer;
+        transform: scale(1.03);
+    }
+
+    .registry span {
+        text-align: center;
+    }
+
+    .registry span {
+        flex-grow: 2;
+    }
+
+    .registry span:nth-child(2) {
+        flex-grow: 1;
+    }
+
+    .registry span:first-child {
+        flex-grow: 4;
+    }
+
+    .paid {
+        background: var(--background-primary);
+        box-shadow: 0px 2px 7px 0px var(--background-dark);
+    }
+
+    .unpaid {
+        background: var(--background-error);
+        box-shadow: 0px 2px 7px 0px var(--background-dark);
+    }
+</style>

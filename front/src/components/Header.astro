@@ -1,0 +1,20 @@
+---
+const { name, price } = Astro.props;
+---
+
+<div class="student-details">
+    <h1>{name} {price}€/h</h1>
+</div>
+
+<style>
+    .student-details {
+        padding: 0.5rem 2rem;
+        text-align: center;
+    }
+
+    .student-details h1 {
+        margin: 0;
+        text-transform: capitalize;
+        text-align: end;
+    }
+</style>

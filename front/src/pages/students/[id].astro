@@ -1,0 +1,144 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from "../../components/Button.astro";
+import Registry from "../../components/Registry.astro";
+import Header from "../../components/Header.astro";
+import Back from "../../components/Back.astro";
+
+// Habilitar Server-Side Rendering (SSR)
+export const prerender = false; 
+
+const { id } = Astro.params; // Obtener ID de la URL
+
+let student = null;
+let unpaid = '';
+
+try {
+	const response = await fetch(`http://localhost:8000/students?id=${id}`);
+	if (response.ok) {
+		student = await response.json();
+		unpaid = student.total_price > 0 ? 'unpaid' : ''
+	} else {
+		console.error('Error: Student not found');
+	}
+} catch (error) {
+	console.error('Error fetching student:', error);
+}
+---
+
+<Layout>
+	{student ? (
+		<Back url="/" />
+		<Header name={student.name} price={student.price} />
+		<div class="student-details">
+			<p>Deuda: <span class={unpaid}>{student.total_price.toFixed(2)}€</span></p>
+			<Button text="Liquidar" type="default" id="liquidarBtn" data_id={id} css="mt-1" />
+		</div>
+		<h2>Registro</h2>
+		<div class="list">
+			{student.classes.map((cls) => (
+				<Registry id={cls.id} user_id={id} date={cls.date} time={cls.time} price={cls.price} paid={cls.paid} />
+			))}
+			<a href=`/students/${id}/clases/new` class="add-class-button">
+				<svg  xmlns="http://www.w3.org/2000/svg"  width="55"  height="55"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-circle-plus"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M9 12h6" /><path d="M12 9v6" /></svg>
+			</a>
+		</div>
+		<Button url={`/students/edit/${id}`} text="Editar" type="default" css="mb-1 mt-1" />
+	) : (
+		<p>Estudiante no encontrado.</p>
+	)}
+</Layout>
+
+<script defer>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("liquidarBtn").addEventListener("click", async function () {
+            const id = this.getAttribute("data_id");
+            try {
+                const response = await fetch(`http://localhost:8000/students/pay/${id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (response.ok) {
+                    console.log("Pago realizado exitosamente.");
+                    window.location.href = `/students/${id}`;
+                } else {
+                    console.error("Error en el pago:", await response.text());
+                }
+            } catch (error) {
+                console.error("Error en la petición:", error);
+            }
+        });
+    });
+</script>
+
+<style>
+	.back-button{
+		position: absolute;
+		color: var(--color-primary);
+	}
+
+	.add-class-button{
+		width: fit-content;
+		margin: 0 auto;
+		color: var(--color-primary);
+	}
+
+	.back-button svg{
+		margin-top: 0.5rem;
+	}
+
+	.student-details {
+		padding: .5rem 2rem;
+		text-align: center;
+	}
+
+	.student-details h1 {
+		margin: 0;
+		text-transform: capitalize;
+		text-align: end;
+	}
+
+	.student-details p {
+		text-align: center;
+		font-size: 2rem;
+    	margin-top: 1rem;
+	}
+
+	.student-details button {
+		font-size: 1.5rem;
+		cursor: pointer;
+		margin-top: .5rem;
+		border: none;
+		background: var(--background-primary);
+		font-family: "Poppins", serif;
+		font-weight: 600;
+		padding: .3rem 1.5rem;
+		border-radius: 5px;
+		box-shadow: 0px 2px 7px 0px var(--background-dark);
+	}
+
+	.unpaid {
+        color: var(--color-error);
+    }
+
+	.list {
+		flex-grow: 1;
+		overflow-y: overlay;
+		display: flex;
+		flex-direction: column;
+		justify-content: start;
+		gap: .5rem;
+		margin-top: .5rem;
+		margin-bottom: .5rem;
+		padding-top: .15rem;
+	}
+
+	h2{
+		text-align: center;
+		margin-top: .5rem;
+		font-weight: 600;
+	}
+</style>

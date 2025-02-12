@@ -1,0 +1,61 @@
+---
+const { url, text, type, css, id, data_id, user_id, small } = Astro.props;
+---
+
+{
+    url ? (
+        <a href={url} class={`${type} ${css}`}>
+            {text}
+        </a>
+    ) : (
+        <button
+            id={id}
+            data_id={data_id}
+            user_id={user_id}
+            class={`${type} ${css}`}
+        >
+            {text}
+        </button>
+    )
+}
+
+<style>
+    a,
+    button {
+        color: var(--color-primary);
+        width: fit-content;
+        margin: auto;
+        font-size: 1.5rem;
+        cursor: pointer;
+        border: none;
+        font-family: "Poppins", serif;
+        font-weight: 600;
+        padding: 0.3rem 1.5rem;
+        border-radius: 5px;
+        box-shadow: 0px 2px 7px 0px var(--background-dark);
+    }
+
+    .small {
+        padding: 0.3rem 1rem;
+    }
+
+    .mb-1 {
+        margin-bottom: 1rem;
+    }
+
+    .mt-1 {
+        margin-top: 1rem;
+    }
+
+    .w-25 {
+        width: 24%;
+    }
+
+    .default {
+        background: var(--background-primary);
+    }
+
+    .error {
+        background: var(--background-error);
+    }
+</style>

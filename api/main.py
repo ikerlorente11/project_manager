@@ -1,0 +1,83 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from database import flask_app
+from models.Student import Student as BaseStudent
+from models.Class import Class as BaseClass
+from controllers.StudentController import getStudents, newStudent, updateStudent, removeStudent, payClasses
+from controllers.ClassController import getClasses, newClass, updateClass, removeClass
+from typing import Optional
+
+# Init app
+app = FastAPI()
+
+# Permitted origins
+origins = ['http://localhost:4321']
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Working
+@app.get("/")
+def root():
+    return {"message": "OK"}
+
+# ENDPOINTS
+# List students
+@app.get("/students", tags=["Student"])
+def listStudents(id: Optional[int] = None):
+    with flask_app.app_context():
+        return getStudents(id)
+
+# Create student
+@app.post("/students", tags=["Student"])
+def createStudent(student: BaseStudent):
+    with flask_app.app_context():
+        return newStudent(student.name, student.price)
+
+# Update student
+@app.put("/students/{id}", tags=["Student"])
+def modifyStudent(id: int, student: BaseStudent):
+    with flask_app.app_context():
+        return updateStudent(id, student)
+
+# Delete student
+@app.delete("/students/{id}", tags=["Student"])
+def deleteStudent(id: int):
+    with flask_app.app_context():
+        return removeStudent(id)
+    
+# Pay classes
+@app.put("/students/pay/{id}", tags=["Student"])
+def payStudent(id: int):
+    with flask_app.app_context():
+        return payClasses(id)
+    
+
+# List classes
+@app.get("/classes", tags=["Class"])
+def listClasses(id: Optional[int] = None):
+    with flask_app.app_context():
+        return getClasses(id)
+
+# Create class
+@app.post("/classes", tags=["Class"])
+def createClass(class_obj: BaseClass):
+    with flask_app.app_context():
+        return newClass(class_obj.date, class_obj.time, class_obj.price, class_obj.paid, class_obj.student_id)
+
+# Update class
+@app.put("/classes/{id}", tags=["Class"])
+def modifyClass(id: int, class_obj: BaseClass):
+    with flask_app.app_context():
+        return updateClass(id, class_obj)
+
+# Delete class
+@app.delete("/classes/{id}", tags=["Class"])
+def deleteClass(id: int):
+    with flask_app.app_context():
+        return removeClass(id)

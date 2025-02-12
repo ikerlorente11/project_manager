@@ -1,0 +1,149 @@
+---
+import Button from "./Button.astro";
+
+const { student } = Astro.props;
+const method = student ? "PUT" : "POST";
+const url = student
+    ? `http://localhost:8000/students/${student.id}`
+    : "http://localhost:8000/students";
+---
+
+<form id="studentForm" method={method} action={url}>
+    <input type="hidden" name="id" value={student?.id} />
+    <input
+        type="text"
+        name="name"
+        placeholder="Nombre"
+        value={student?.name}
+        required
+    />
+    <input
+        type="number"
+        name="price"
+        placeholder="Precio hora"
+        value={student?.price}
+        required
+    />
+    <div class="btn-group">
+        <Button text="Guardar" type="default" />
+        {
+            student && (
+                <Button
+                    id="deleteUser"
+                    text="Borrar"
+                    type="error"
+                    data_id={student.id}
+                />
+            )
+        }
+    </div>
+</form>
+
+<script defer>
+    document
+        .getElementById("studentForm")
+        .addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const jsonData = Object.fromEntries(formData.entries());
+
+            const method = this.method == "post" ? "POST" : "PUT";
+            const action = this.action;
+
+            try {
+                const response = await fetch(action, {
+                    method: method,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(jsonData),
+                });
+
+                if (response.ok) {
+                    if (this.method == "post") {
+                        console.log("Estudiante guardado exitosamente.");
+                        window.location.href = "/";
+                    } else {
+                        console.log("Estudiante actualizado exitosamente.");
+                        window.location.href = "/students/" + jsonData.id;
+                    }
+                } else {
+                    console.error("Error en la respuesta del servidor.");
+                }
+            } catch (error) {
+                console.error("Error en la petición:", error);
+            }
+        });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document
+            .getElementById("deleteUser")
+            .addEventListener("click", async function () {
+                const id = this.getAttribute("data_id");
+                try {
+                    const response = await fetch(
+                        `http://localhost:8000/students/${id}`,
+                        {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        },
+                    );
+
+                    if (response.ok) {
+                        console.log("Usuario eliminado exitosamente.");
+                        window.location.href = "/";
+                    } else {
+                        console.error(
+                            "Error al eliminar usuario:",
+                            await response.text(),
+                        );
+                    }
+                } catch (error) {
+                    console.error("Error en la petición:", error);
+                }
+            });
+    });
+</script>
+
+<style>
+    form {
+        width: -webkit-fill-available;
+        max-width: 75%;
+        margin: 0 auto;
+        margin-top: 3rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    input {
+        border: none;
+        font-size: 1.3rem;
+        padding: 0.5rem;
+        border-radius: 3px;
+        background: var(--background-input);
+    }
+
+    input:focus {
+        border: none;
+        outline: none;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+
+    .btn-group {
+        display: flex;
+        margin-top: 1rem;
+    }
+</style>

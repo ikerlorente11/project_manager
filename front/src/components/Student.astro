@@ -1,0 +1,46 @@
+---
+export interface Props {
+    id: number;
+    name: string;
+    total_price: number;
+}
+
+const { id, name, total_price } = Astro.props;
+const unpaid = total_price > 0 ? "unpaid" : "";
+---
+
+<a href={`/students/${id}`} class="student">
+    <p>{name}</p>
+    <p class={unpaid}>{total_price.toFixed(2)}€</p>
+</a>
+
+<style>
+    .student {
+        min-height: 65px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 5px;
+        background: var(--background-primary);
+        padding: 0 2rem;
+        margin: 0 2rem;
+        text-decoration: none;
+        color: var(--color-primary);
+        font-size: 1.5rem;
+        box-shadow: 0px 2px 7px 0px var(--background-dark);
+        transition: transform 200ms;
+    }
+
+    .student:hover {
+        cursor: pointer;
+        transform: scale(1.03);
+    }
+
+    .student p {
+        text-transform: capitalize;
+    }
+
+    .unpaid {
+        color: var(--color-error);
+    }
+</style>

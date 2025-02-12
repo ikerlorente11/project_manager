@@ -1,0 +1,280 @@
+---
+import Button from "./Button.astro";
+
+const { user_id, price, current_class } = Astro.props;
+const method = current_class ? "PUT" : "POST";
+const url = current_class
+    ? `http://localhost:8000/classes/${current_class.id}`
+    : "http://localhost:8000/classes";
+
+let hour = 0;
+let minutes = 0;
+
+if (current_class) {
+    hour = Math.trunc(current_class.time / 60);
+    minutes = current_class.time - hour * 60;
+}
+---
+
+<form id="classForm" method={method} action={url}>
+    <input type="hidden" name="student_id" value={user_id} />
+    <input
+        type="date"
+        name="date"
+        value={current_class?.date || new Date().toISOString().split("T")[0]}
+        required
+    />
+    <div class="time">
+        <input
+            id="hours"
+            type="number"
+            name="hours"
+            placeholder="Horas"
+            value={hour}
+            required
+        />:
+        <input
+            id="minutes"
+            type="number"
+            name="minutes"
+            placeholder="Minutos"
+            value={minutes}
+            required
+        />
+    </div>
+    <div class="time-buttons">
+        <Button id="btn-1h" text="+1h" type="default" css="w-25 small" />
+        <Button id="btn-4h" text="+4h" type="default" css="w-25 small" />
+        <Button id="btn-10m" text="+10'" type="default" css="w-25 small" />
+        <Button id="btn-30m" text="+30'" type="default" css="w-25 small" />
+    </div>
+    <input
+        type="number"
+        name="price"
+        placeholder="Precio hora"
+        value={current_class?.price || price}
+        required
+    />
+    <div class="radio-group">
+        <div>
+            <input
+                id="paid"
+                type="radio"
+                name="paid"
+                value="true"
+                checked={current_class?.paid}
+            />
+            <label for="paid">Pagado</label>
+        </div>
+        <div>
+            <input
+                id="unpaid"
+                type="radio"
+                name="paid"
+                value="false"
+                checked={!current_class?.paid}
+            />
+            <label for="unpaid">Sin pagar</label>
+        </div>
+    </div>
+    <div class="btn-group">
+        <Button text="Guardar" type="default" />
+        {
+            current_class && (
+                <Button
+                    id="deleteClass"
+                    text="Borrar"
+                    type="error"
+                    data_id={current_class.id}
+                    user_id={user_id}
+                />
+            )
+        }
+    </div>
+</form>
+
+<script defer>
+    document
+        .getElementById("classForm")
+        .addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            let jsonData = Object.fromEntries(formData.entries());
+            jsonData["time"] =
+                Number(jsonData.hours) * 60 + Number(jsonData.minutes);
+
+            const method = this.method == "post" ? "POST" : "PUT";
+            const action = this.action;
+
+            try {
+                const response = await fetch(action, {
+                    method: method,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(jsonData),
+                });
+
+                if (response.ok) {
+                    if (this.method == "post") {
+                        console.log("Clase guardada exitosamente.");
+                    } else {
+                        console.log("Clase actualizada exitosamente.");
+                    }
+                    window.location.href = "/students/" + jsonData.student_id;
+                } else {
+                    console.error("Error en la respuesta del servidor.");
+                }
+            } catch (error) {
+                console.error("Error en la petición:", error);
+            }
+        });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document
+            .getElementById("deleteClass")
+            .addEventListener("click", async function () {
+                const id = this.getAttribute("data_id");
+                const user_id = this.getAttribute("user_id");
+                try {
+                    const response = await fetch(
+                        `http://localhost:8000/classes/${id}`,
+                        {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        },
+                    );
+
+                    if (response.ok) {
+                        console.log("Clase eliminada exitosamente.");
+                        window.location.href = "/students/" + user_id;
+                    } else {
+                        console.error(
+                            "Error al eliminar clase:",
+                            await response.text(),
+                        );
+                    }
+                } catch (error) {
+                    console.error("Error en la petición:", error);
+                }
+            });
+    });
+
+    document.getElementById("btn-1h").addEventListener("click", (event) => {
+        event.preventDefault();
+        const add = 1;
+        let hourInput = document.getElementById("hours");
+        hourInput.value = Number(hourInput.value) + add;
+    });
+    document.getElementById("btn-4h").addEventListener("click", (event) => {
+        event.preventDefault();
+        const add = 4;
+        let hourInput = document.getElementById("hours");
+        hourInput.value = Number(hourInput.value) + add;
+    });
+    document.getElementById("btn-10m").addEventListener("click", (event) => {
+        event.preventDefault();
+        const add = 10;
+        let minuteInput = document.getElementById("minutes");
+
+        if (Number(minuteInput.value) + add >= 60) {
+            let hourInput = document.getElementById("hours");
+            hourInput.value = Number(hourInput.value) + 1;
+
+            minuteInput.value = Number(minuteInput.value) + add - 60;
+        } else {
+            minuteInput.value = Number(minuteInput.value) + add;
+        }
+    });
+    document.getElementById("btn-30m").addEventListener("click", (event) => {
+        event.preventDefault();
+        const add = 30;
+        let minuteInput = document.getElementById("minutes");
+
+        if (Number(minuteInput.value) + add >= 60) {
+            let hourInput = document.getElementById("hours");
+            hourInput.value = Number(hourInput.value) + 1;
+
+            minuteInput.value = Number(minuteInput.value) + add - 60;
+        } else {
+            minuteInput.value = Number(minuteInput.value) + add;
+        }
+    });
+</script>
+
+<style>
+    form {
+        width: -webkit-fill-available;
+        max-width: 75%;
+        margin: 0 auto;
+        margin-top: 3rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    input {
+        border: none;
+        font-size: 1.3rem;
+        padding: 0.5rem;
+        border-radius: 3px;
+        background: var(--background-input);
+    }
+
+    input:focus {
+        border: none;
+        outline: none;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+
+    .time {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 1.5rem;
+        margin-top: 0.7rem;
+    }
+
+    .time input {
+        width: 15%;
+    }
+
+    .time-buttons {
+        margin-bottom: 0.7rem;
+    }
+
+    .radio-group {
+        display: flex;
+        justify-content: space-between;
+        margin: 0.5rem 1rem 0 1rem;
+        font-size: 1.2rem;
+    }
+
+    .radio-group,
+    .radio-group input,
+    .radio-group label {
+        cursor: pointer;
+    }
+
+    .radio-group input {
+        transform: scale(1.3);
+    }
+
+    .btn-group {
+        display: flex;
+        margin-top: 1rem;
+    }
+</style>
