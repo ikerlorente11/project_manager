@@ -3,33 +3,82 @@
 ## Description
 Este proyecto tiene el fin de la gestión de clases impartidas a estudiantes para controlar las horas impartidas y los gastos generados de ellas.
 
-Este proyecto es una aplicación web desarrollada utilizando **Flask-Migrate** (para el manejo de migraciones) y **FastAPI** (para el desarrollo de APIs). El objetivo de esta aplicación es proporcionar una solución robusta para manejar datos y servicios REST.
+Este proyecto es una aplicación web desarrollada utilizando **Astro** (para el desarrollo del front), **Mysql** (como base de datos), **Flask-Migrate** (para el manejo de migraciones) y **FastAPI** (para el desarrollo de APIs). El objetivo de esta aplicación es proporcionar una solución robusta para manejar datos y servicios REST.
 
 ## Estructura del Proyecto
 ```
 FastApi_Flask/
-├── Dockerfile
 ├── README.md
 ├── api
+│   ├── Dockerfile
 │   ├── controllers
-│   │   ├── UserController.py
+│   │   ├── ClassController.py
+│   │   ├── StudentController.py
 │   ├── database.py
 │   ├── main.py
 │   ├── migrations
 │   │   ├── README
-│   │   ├── __pycache__
-│   │   │   └── env.cpython-39.pyc
 │   │   ├── alembic.ini
 │   │   ├── env.py
 │   │   ├── script.py.mako
 │   │   └── versions
-│   │       ├── 6b836cb6b8f7_initial_migration.py
+│   │       ├── 24a5c03010f7_initial_migration.py
 │   ├── models
-│   │   ├── User.py
+│   │   ├── Class.py
+│   │   ├── Student.py
+│   ├── requirements.txt
 │   └── wait-for-db.sh
 ├── docker-compose.yml
-└── requirements.txt
+└── front
+    ├── Dockerfile
+    ├── README.md
+    ├── astro.config.mjs
+    ├── package-lock.json
+    ├── package.json
+    ├── public
+    │   └── favicon.svg
+    ├── src
+    │   ├── assets
+    │   │   ├── astro.svg
+    │   │   └── background.svg
+    │   ├── components
+    │   │   ├── Back.astro
+    │   │   ├── Button.astro
+    │   │   ├── ClassForm.astro
+    │   │   ├── Header.astro
+    │   │   ├── Registry.astro
+    │   │   ├── Student.astro
+    │   │   └── StudentForm.astro
+    │   ├── layouts
+    │   │   └── Layout.astro
+    │   └── pages
+    │       ├── index.astro
+    │       └── students
+    │           ├── [id]
+    │           │   └── clases
+    │           │       ├── edit
+    │           │       │   └── [class_id].astro
+    │           │       └── new.astro
+    │           ├── [id].astro
+    │           ├── edit
+    │           │   └── [id].astro
+    │           └── new.astro
+    ├── startup.sh
+    └── tsconfig.json
 ```
+
+## Servicios
+### 1. Front
+   - Tecnología: Astro
+   - Puerto: 3000
+
+### 2. API
+   - Tecnología: Python
+   - Puerto: 8000
+
+### 3. Base de datos
+   - Tecnología: MySQL
+   - Puerto: 3306
 
 ## Estructura de case de datos
 1. Students
@@ -60,11 +109,13 @@ FastApi_Flask/
    git clone <URL>
    ```
 
-2. Navegar hasta la carpeta del proyecto creada y despliega el contenedor:
+2. Configurar los puertos si es necesario en el docker-compose
+
+3. Navegar hasta la carpeta del proyecto creada y despliega el contenedor:
 
    ```
-   cd FastApi_Flask
+   cd gestor_clases
    docker-compose up -d
    ```
 
-3. Abrir un navegador web y acceder a la aplicación en la dirección `http://localhost:8000/docs`.
+4. Abrir un navegador web y acceder a la aplicación en la dirección `http://localhost:3000`.
