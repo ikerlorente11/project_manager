@@ -44,50 +44,50 @@ def listStudents(id: Optional[int] = None):
         return getStudents(id)
 
 # Create student
-@app.post("/students", tags=["Student"])
+@router.post("/students", tags=["Student"])
 def createStudent(student: BaseStudent):
     with flask_app.app_context():
         return newStudent(student.name, student.price)
 
 # Update student
-@app.put("/students/{id}", tags=["Student"])
+@router.put("/students/{id}", tags=["Student"])
 def modifyStudent(id: int, student: BaseStudent):
     with flask_app.app_context():
         return updateStudent(id, student)
 
 # Delete student
-@app.delete("/students/{id}", tags=["Student"])
+@router.delete("/students/{id}", tags=["Student"])
 def deleteStudent(id: int):
     with flask_app.app_context():
         return removeStudent(id)
     
 # Pay classes
-@app.put("/students/pay/{id}", tags=["Student"])
+@router.put("/students/pay/{id}", tags=["Student"])
 def payStudent(id: int):
     with flask_app.app_context():
         return payClasses(id)
     
 
 # List classes
-@app.get("/classes", tags=["Class"])
+@router.get("/classes", tags=["Class"])
 def listClasses(id: Optional[int] = None):
     with flask_app.app_context():
         return getClasses(id)
 
 # Create class
-@app.post("/classes", tags=["Class"])
+@router.post("/classes", tags=["Class"])
 def createClass(class_obj: BaseClass):
     with flask_app.app_context():
         return newClass(class_obj.date, class_obj.time, class_obj.price, class_obj.paid, class_obj.student_id)
 
 # Update class
-@app.put("/classes/{id}", tags=["Class"])
+@router.put("/classes/{id}", tags=["Class"])
 def modifyClass(id: int, class_obj: BaseClass):
     with flask_app.app_context():
         return updateClass(id, class_obj)
 
 # Delete class
-@app.delete("/classes/{id}", tags=["Class"])
+@router.delete("/classes/{id}", tags=["Class"])
 def deleteClass(id: int):
     with flask_app.app_context():
         return removeClass(id)
