@@ -27,16 +27,18 @@ const url = student
         required
     />
     <div class="btn-group">
-        <Button text="Guardar" type="default" />
         {
-            student && (
+            student ? (
+                <Button text="Guardar" type="default" css="small fill-available" />
                 <Button
                     id="deleteUser"
                     text="Borrar"
                     type="error"
                     data_id={student.id}
+                    css="small fill-available"
                 />
-            )
+            ):
+            <Button text="Guardar" type="default" />
         }
     </div>
 </form>
@@ -156,5 +158,6 @@ const url = student
     .btn-group {
         display: flex;
         margin-top: 1rem;
+        gap: 2rem;
     }
 </style>
