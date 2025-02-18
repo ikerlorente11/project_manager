@@ -119,12 +119,14 @@ if (current_class) {
                 });
 
                 if (response.ok) {
+                    const baseUrl = document.body.getAttribute("data-base-url");
                     if (this.method == "post") {
                         console.log("Clase guardada exitosamente.");
                     } else {
                         console.log("Clase actualizada exitosamente.");
                     }
-                    window.location.href = "/students/" + jsonData.student_id;
+                    window.location.href =
+                        `${baseUrl}students/` + jsonData.student_id;
                 } else {
                     console.error("Error en la respuesta del servidor.");
                 }
@@ -155,8 +157,11 @@ if (current_class) {
                         );
 
                         if (response.ok) {
+                            const baseUrl =
+                                document.body.getAttribute("data-base-url");
                             console.log("Clase eliminada exitosamente.");
-                            window.location.href = "/students/" + user_id;
+                            window.location.href =
+                                `${baseUrl}students/` + user_id;
                         } else {
                             console.error(
                                 "Error al eliminar clase:",

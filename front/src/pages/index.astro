@@ -15,7 +15,7 @@ const students = await response.json();
 		{students.map((student) => <Student {...student} />)}
 	</div>
 	<Button
-		url="/students/new"
+		url=`${import.meta.env.BASE_URL}students/new`
 		text="Nuevo usuario"
 		type="default"
 		css="mb-1 mt-1"
@@ -30,5 +30,6 @@ const students = await response.json();
 		gap: 0.8rem;
 		flex-grow: 1;
 		overflow-y: overlay;
+		padding: 7px 0;
 	}
 </style>

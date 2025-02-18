@@ -6,7 +6,7 @@ import Back from "../../components/Back.astro";
 ---
 
 <Layout>
-    <Back url="/" />
+    <Back url=`${import.meta.env.BASE_URL}` />
     <Header name={""} price={""} />
     <StudentForm />
 </Layout>

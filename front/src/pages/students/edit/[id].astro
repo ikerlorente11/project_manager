@@ -26,7 +26,7 @@ try {
 ---
 
 <Layout>
-    <Back url=`/students/${id}` />
+    <Back url=`${import.meta.env.BASE_URL}students/${id}` />
     <Header name={student.name} price={student.price} />
     <StudentForm student={student} />
 </Layout>

@@ -2,9 +2,12 @@
 import { defineConfig } from 'astro/config';
 import viteConfig from './vite.config.js'; // Importar configuración de Vite
 
+const isDemo = process.env.ENV === 'demo';
+const baseUrl = process.env.PUBLIC_BASE_URL || '';
+
 // https://astro.build/config
 export default defineConfig({
-    base: '/project_manager/',
+    base: isDemo ? `${baseUrl}/` : '/',
     output: 'server', // Esto activa SSR
     server: {
         host: true,

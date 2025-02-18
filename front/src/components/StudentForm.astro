@@ -11,7 +11,7 @@ const url = student
 ---
 
 <form id="studentForm" method={method} action={url}>
-    <input type="hidden" name="id" value={student?.id} />
+    {method === "PUT" && <input type="hidden" name="id" value={student?.id} />}
     <input
         type="text"
         name="name"
@@ -63,12 +63,14 @@ const url = student
                 });
 
                 if (response.ok) {
+                    const baseUrl = document.body.getAttribute("data-base-url");
                     if (this.method == "post") {
                         console.log("Estudiante guardado exitosamente.");
-                        window.location.href = "/";
+                        window.location.href = `${baseUrl}`;
                     } else {
                         console.log("Estudiante actualizado exitosamente.");
-                        window.location.href = "/students/" + jsonData.id;
+                        window.location.href =
+                            `${baseUrl}students/` + jsonData.id;
                     }
                 } else {
                     console.error("Error en la respuesta del servidor.");
@@ -99,8 +101,10 @@ const url = student
                         );
 
                         if (response.ok) {
+                            const baseUrl =
+                                document.body.getAttribute("data-base-url");
                             console.log("Usuario eliminado exitosamente.");
-                            window.location.href = "/";
+                            window.location.href = `${baseUrl}`;
                         } else {
                             console.error(
                                 "Error al eliminar usuario:",

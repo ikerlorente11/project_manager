@@ -6,7 +6,10 @@ const hour = Math.trunc(time / 60);
 const minutes = time - hour * 60;
 ---
 
-<a href=`/students/${user_id}/clases/edit/${id}` class={`registry ${type}`}>
+<a
+    href=`${import.meta.env.BASE_URL}students/${user_id}/clases/edit/${id}`
+    class={`registry ${type}`}
+>
     <span>{date}</span>
     <span>{price}€</span>
     <span>{hour}h {minutes}m</span>

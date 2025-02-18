@@ -9,7 +9,7 @@ const { id, name, total_price } = Astro.props;
 const unpaid = total_price > 0 ? "unpaid" : "";
 ---
 
-<a href={`/students/${id}`} class="student">
+<a href={`${import.meta.env.BASE_URL}students/${id}`} class="student">
     <p>{name}</p>
     <p class={unpaid}>{total_price.toFixed(2)}€</p>
 </a>
