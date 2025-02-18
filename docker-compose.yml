@@ -26,8 +26,8 @@ services:
     environment:
       - ENV=demo
       - PUBLIC_BASE_URL=/project_manager
-      - API_BASE_URL=http://gestor_clases_api:8000
-      - PUBLIC_API_BASE_URL=http://localhost:8000
+      - API_BASE_URL=http://gestor_clases_api:8000/project_manager_api
+      - PUBLIC_API_BASE_URL=http://localhost:8000/project_manager_api
     ports:
       - '3000:4321'
     restart: unless-stopped
