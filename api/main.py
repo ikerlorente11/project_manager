@@ -16,6 +16,10 @@ origins = [
     'http://localhost:3000',
     'http://gestor_clases_front:3000',
     'http://gestor_clases_front:4321',
+    'https://localhost:4321',
+    'https://localhost:3000',
+    'https://gestor_clases_front:3000',
+    'https://gestor_clases_front:4321',
 ]
 
 app.add_middleware(
