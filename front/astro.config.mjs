@@ -4,6 +4,7 @@ import viteConfig from './vite.config.js'; // Importar configuración de Vite
 
 // https://astro.build/config
 export default defineConfig({
+    base: '/project_manager/',
     output: 'server', // Esto activa SSR
     server: {
         host: true,
