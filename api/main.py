@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from database import flask_app
 from models.Student import Student as BaseStudent
@@ -28,8 +28,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Crear un router para todas las rutas
+router = APIRouter()
+
 # Working
-@app.get("/")
+@router.get("/")
 def root():
     return {"message": "OK"}
 
@@ -88,3 +91,5 @@ def modifyClass(id: int, class_obj: BaseClass):
 def deleteClass(id: int):
     with flask_app.app_context():
         return removeClass(id)
+    
+app.include_router(router, prefix="/project_manager_api")
