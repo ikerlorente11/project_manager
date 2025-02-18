@@ -38,7 +38,7 @@ def root():
 
 # ENDPOINTS
 # List students
-@app.get("/students", tags=["Student"])
+@router.get("/students", tags=["Student"])
 def listStudents(id: Optional[int] = None):
     with flask_app.app_context():
         return getStudents(id)
