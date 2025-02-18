@@ -1,4 +1,6 @@
 ---
+import { ClientRouter } from "astro:transitions";
+
 const BASE_URL = import.meta.env.BASE_URL;
 const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL;
 ---
@@ -11,6 +13,7 @@ const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>Gestor Clases</title>
+		<ClientRouter />
 	</head>
 	<body data-base-url={BASE_URL} data-api-base-url={API_BASE_URL}>
 		<div class="container">
