@@ -4,9 +4,10 @@ services:
       context: ./api
     container_name: gestor_clases_api
     environment:
+      - ENV=demo
       - FLASK_APP=database
       - MYSQL_DATABASE=data
-      - MYSQL_USER=user
+      - MYSQL_USER=root
       - MYSQL_PASSWORD=password
     ports:
       - '8000:8000'
@@ -24,7 +25,7 @@ services:
       context: ./front
     container_name: gestor_clases_front
     environment:
-      - ENV=demo
+      - ENV=local
       - PUBLIC_BASE_URL=/project_manager
       - API_BASE_URL=http://gestor_clases_api:8000/project_manager_api
       - PUBLIC_API_BASE_URL=http://localhost:8000/project_manager_api
@@ -47,6 +48,7 @@ services:
       - MYSQL_PASSWORD=password
     ports:
       - 3307:3306
+    command: --event_scheduler=ON
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 2s
