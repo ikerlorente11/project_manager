@@ -4,7 +4,12 @@ set -e
 # Wait until database is ready
 echo "Wait until MySQL is prepared..."
 
-until python -c "import pymysql; pymysql.connect(host='db', user='user', password='password', database='data')" 2>/dev/null; do
+until python -c "import pymysql, os; pymysql.connect(
+    host=os.getenv('MYSQL_HOST', 'db'), 
+    user=os.getenv('MYSQL_USER', 'root'), 
+    password=os.getenv('MYSQL_PASSWORD', 'password'), 
+    database=os.getenv('MYSQL_DATABASE', 'data')
+)" 2>/dev/null; do
     echo "MySQL not prepared. Waiting..."
     sleep 2
 done
