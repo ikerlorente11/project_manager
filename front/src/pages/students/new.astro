@@ -3,10 +3,12 @@ import Layout from "../../layouts/Layout.astro";
 import StudentForm from "../../components/StudentForm.astro";
 import Header from "../../components/Header.astro";
 import Back from "../../components/Back.astro";
+
+import { BASE_URL } from "astro:env/server";
 ---
 
 <Layout>
-    <Back url=`${import.meta.env.BASE_URL}` />
+    <Back url=`${BASE_URL || "/"}` />
     <Header name={""} price={""} />
     <StudentForm />
 </Layout>

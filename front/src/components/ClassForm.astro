@@ -1,13 +1,13 @@
 ---
 import Button from "./Button.astro";
 
-const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL;
+import { PUBLIC_API_BASE_URL } from "astro:env/server";
 
 const { user_id, price, current_class } = Astro.props;
 const method = current_class ? "PUT" : "POST";
 const url = current_class
-    ? `${API_BASE_URL}/classes/${current_class.id}`
-    : `${API_BASE_URL}/classes`;
+    ? `${PUBLIC_API_BASE_URL}classes/${current_class.id}`
+    : `${PUBLIC_API_BASE_URL}classes`;
 
 let hour = 0;
 let minutes = 0;
@@ -46,12 +46,12 @@ if (current_class) {
     </div>
     <div class="time-buttons">
         <div>
-            <Button id="btn-1h" text="+1h" type="default" css="fill-available small" />
-            <Button id="btn-4h" text="+4h" type="default" css="fill-available small" />
+            <Button id="btn-1h" text="+1h" style="default" css="fill-available small" />
+            <Button id="btn-4h" text="+4h" style="default" css="fill-available small" />
         </div>
         <div>
-            <Button id="btn-10m" text="+10'" type="default" css="fill-available small" />
-            <Button id="btn-30m" text="+30'" type="default" css="fill-available small" />
+            <Button id="btn-10m" text="+10'" style="default" css="fill-available small" />
+            <Button id="btn-30m" text="+30'" style="default" css="fill-available small" />
         </div>
     </div>
     <input
@@ -86,101 +86,100 @@ if (current_class) {
     <div class="btn-group">
         {
             current_class ? (
-                <Button text="Guardar" type="default" css="small fill-available" />
+                <Button id="saveClass" text="Guardar" type="button" style="default" css="small fill-available" />
                 <Button
                     id="deleteClass"
+                    type="button"
                     text="Borrar"
-                    type="error"
+                    style="error"
                     data_id={current_class.id}
                     user_id={user_id}
                     css="small fill-available"
                 />
             ) : (
-                <Button text="Guardar" type="default" />
+                <Button id="saveClass" type="button" text="Guardar" style="default" />
             )
         }
     </div>
 </form>
 
 <script defer>
-    document
-        .getElementById("classForm")
-        .addEventListener("submit", async function (event) {
-            event.preventDefault();
+    document.getElementById("saveClass").addEventListener("click", async function (event) {
+        event.preventDefault();
 
-            const formData = new FormData(this);
-            let jsonData = Object.fromEntries(formData.entries());
-            jsonData["time"] =
-                Number(jsonData.hours) * 60 + Number(jsonData.minutes);
+        const form = document.getElementById("classForm")
 
-            const method = this.method == "post" ? "POST" : "PUT";
-            const action = this.action;
+        const formData = new FormData(form);
+        let jsonData = Object.fromEntries(formData.entries());
+        jsonData["time"] =
+            Number(jsonData.hours) * 60 + Number(jsonData.minutes);
 
-            try {
-                const response = await fetch(action, {
-                    method: method,
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(jsonData),
-                });
+        const method = form.method == "post" ? "POST" : "PUT";
+        const action = form.action;
 
-                if (response.ok) {
-                    const baseUrl = document.body.getAttribute("data-base-url");
-                    if (this.method == "post") {
-                        console.log("Clase guardada exitosamente.");
-                    } else {
-                        console.log("Clase actualizada exitosamente.");
-                    }
-                    window.location.href =
-                        `${baseUrl}students/` + jsonData.student_id;
+        try {
+            const response = await fetch(action, {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(jsonData),
+            });
+
+            if (response.ok) {
+                const baseUrl = document.body.getAttribute("data-base-url");
+                if (form.method == "post") {
+                    console.log("Clase guardada exitosamente.");
                 } else {
-                    console.error("Error en la respuesta del servidor.");
+                    console.log("Clase actualizada exitosamente.");
                 }
-            } catch (error) {
-                console.error("Error en la petición:", error);
+                window.location.href =
+                    `${baseUrl}students/` + jsonData.student_id;
+            } else {
+                console.error("Error en la respuesta del servidor.");
             }
-        });
-
-    document.addEventListener("DOMContentLoaded", function () {
-        if (document.getElementById("deleteClass")) {
-            document
-                .getElementById("deleteClass")
-                .addEventListener("click", async function () {
-                    const id = this.getAttribute("data_id");
-                    const user_id = this.getAttribute("user_id");
-                    try {
-                        const apiBaseUrl =
-                            document.body.getAttribute("data-api-base-url");
-
-                        const response = await fetch(
-                            `${apiBaseUrl}/classes/${id}`,
-                            {
-                                method: "DELETE",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
-                            },
-                        );
-
-                        if (response.ok) {
-                            const baseUrl =
-                                document.body.getAttribute("data-base-url");
-                            console.log("Clase eliminada exitosamente.");
-                            window.location.href =
-                                `${baseUrl}students/` + user_id;
-                        } else {
-                            console.error(
-                                "Error al eliminar clase:",
-                                await response.text(),
-                            );
-                        }
-                    } catch (error) {
-                        console.error("Error en la petición:", error);
-                    }
-                });
+        } catch (error) {
+            console.error("Error en la petición:", error);
         }
     });
+
+    if (document.getElementById("deleteClass")) {
+        document
+            .getElementById("deleteClass")
+            .addEventListener("click", async function () {
+                const id = this.getAttribute("data_id");
+                const user_id = this.getAttribute("user_id");
+                try {
+                    const apiBaseUrl =
+                        document.body.getAttribute("data-api-base-url");
+
+                    const response = await fetch(
+                        `${apiBaseUrl}classes/${id}`,
+                        {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        },
+                    );
+
+                    if (response.ok) {
+                        const baseUrl =
+                            document.body.getAttribute("data-base-url");
+                        console.log("Clase eliminada exitosamente.");
+                        window.location.href =
+                            `${baseUrl}students/` + user_id;
+                    } else {
+                        console.error(
+                            "Error al eliminar clase:",
+                            await response.text(),
+                        );
+                    }
+                } catch (error) {
+                    console.error("Error en la petición:", error);
+                }
+            });
+    }
 
     document.getElementById("btn-1h").addEventListener("click", (event) => {
         event.preventDefault();

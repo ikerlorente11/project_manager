@@ -5,11 +5,13 @@ export interface Props {
     total_price: number;
 }
 
+import { BASE_URL } from "astro:env/server";
+
 const { id, name, total_price } = Astro.props;
 const unpaid = total_price > 0 ? "unpaid" : "";
 ---
 
-<a href={`${import.meta.env.BASE_URL}students/${id}`} class="student">
+<a href={`${BASE_URL || "/"}students/${id}`} class="student">
     <p>{name}</p>
     <p class={unpaid}>{total_price.toFixed(2)}€</p>
 </a>

@@ -13,10 +13,10 @@ const { id } = Astro.params; // Obtener ID de la URL
 let student = null;
 let unpaid = '';
 
-const API_BASE_URL = import.meta.env.API_BASE_URL;
+import { SERVER_API_BASE_URL, BASE_URL } from "astro:env/server";
 
 try {
-	const response = await fetch(`${API_BASE_URL}/students?id=${id}`);
+	const response = await fetch(`${SERVER_API_BASE_URL}students?id=${id}`);
 	if (response.ok) {
 		student = await response.json();
 		unpaid = student.total_price > 0 ? 'unpaid' : ''
@@ -30,13 +30,13 @@ try {
 
 <Layout>
 	{student ? (
-		<Back url=`${import.meta.env.BASE_URL}` />
+		<Back url=`${BASE_URL || "/"}` />
 		<Header name={student.name} price={student.price} />
 		<div class="student-details">
 			<p>Deuda: <span class={unpaid}>{student.total_price.toFixed(2)}€</span></p>
 			<div class="user-btns">
-				<Button url={`${import.meta.env.BASE_URL}students/edit/${id}`} text="Editar" type="default" css="fill-available" />
-				<Button text="Liquidar" type="default" id="liquidarBtn" data_id={id} css="fill-available" />
+				<Button url={`${BASE_URL || "/"}students/edit/${id}`} text="Editar" style="default" css="fill-available" />
+				<Button text="Liquidar" type="button" style="default" id="liquidarBtn" data_id={id} css="fill-available" />
 			</div>
 		</div>
 		<h2>Registros</h2>
@@ -46,9 +46,9 @@ try {
 			))}
 		</div>
 		<Button
-		url=`${import.meta.env.BASE_URL}students/${id}/clases/new`
+		url=`${BASE_URL || "/"}students/${id}/clases/new`
 		text="Nuevo registro"
-		type="default"
+		style="default"
 		css="mb-1 mt-1"
 	/>
 	) : (
@@ -57,32 +57,30 @@ try {
 </Layout>
 
 <script defer>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("liquidarBtn").addEventListener("click", async function () {
-            const id = this.getAttribute("data_id");
-            try {
-				const apiBaseUrl =
-                        document.body.getAttribute("data-api-base-url");
+	document.getElementById("liquidarBtn").addEventListener("click", async function () {
+		const id = this.getAttribute("data_id");
+		try {
+			const apiBaseUrl =
+					document.body.getAttribute("data-api-base-url");
 
-                const response = await fetch(`${apiBaseUrl}/students/pay/${id}`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
+			const response = await fetch(`${apiBaseUrl}students/pay/${id}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
 
-                if (response.ok) {
-					const baseUrl = document.body.getAttribute("data-base-url");
-                    console.log("Pago realizado exitosamente.");
-                    window.location.href = `${baseUrl}students/${id}`;
-                } else {
-                    console.error("Error en el pago:", await response.text());
-                }
-            } catch (error) {
-                console.error("Error en la petición:", error);
-            }
-        });
-    });
+			if (response.ok) {
+				const baseUrl = document.body.getAttribute("data-base-url");
+				console.log("Pago realizado exitosamente.");
+				window.location.href = `${baseUrl}students/${id}`;
+			} else {
+				console.error("Error en el pago:", await response.text());
+			}
+		} catch (error) {
+			console.error("Error en la petición:", error);
+		}
+	});
 </script>
 
 <style>

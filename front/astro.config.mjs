@@ -1,17 +1,17 @@
-// @ts-check
-import { defineConfig } from 'astro/config';
-import viteConfig from './vite.config.js'; // Importar configuración de Vite
+import { defineConfig, envField } from 'astro/config';
+import node from '@astrojs/node';
 
-const isDemo = process.env.ENV === 'demo';
-const baseUrl = process.env.PUBLIC_BASE_URL || '';
+const base = process.env.BASE_URL;
 
-// https://astro.build/config
 export default defineConfig({
-    base: isDemo ? `${baseUrl}/` : '/',
-    output: 'server', // Esto activa SSR
-    server: {
-        host: true,
-        port: 4321,
-    },
-    vite: viteConfig, // Forzar Astro a usar esta configuración de Vite
+    base: base,
+    adapter: node({ mode: 'standalone' }), 
+    env: {
+        schema: {
+            ENV: envField.string({ context: 'server', access: 'public' }),
+            BASE_URL: envField.string({ context: 'server', access: 'public', optional: true }),
+            SERVER_API_BASE_URL: envField.string({ context: 'server', access: 'public' }),
+            PUBLIC_API_BASE_URL: envField.string({ context: 'server', access: 'public' }),
+        },
+    }
 });

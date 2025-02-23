@@ -1,13 +1,15 @@
 ---
 const { id, user_id, date, time, price, paid } = Astro.props;
 
+import { BASE_URL } from "astro:env/server";
+
 const type = paid ? "paid" : "unpaid";
 const hour = Math.trunc(time / 60);
 const minutes = time - hour * 60;
 ---
 
 <a
-    href=`${import.meta.env.BASE_URL}students/${user_id}/clases/edit/${id}`
+    href=`${BASE_URL || "/"}students/${user_id}/clases/edit/${id}`
     class={`registry ${type}`}
 >
     <span>{date}</span>

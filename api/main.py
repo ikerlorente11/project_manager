@@ -12,12 +12,12 @@ app = FastAPI()
 
 # Permitted origins
 origins = [
-    'http://localhost:4321',
-    'http://localhost:3000',
-    'http://gestor_clases_front:3000',
-    'http://gestor_clases_front:4321',
-    'https://serveriker.ddns.net:3000',
-    'https://serveriker.ddns.net:4321',
+    'http://localhost:5321',
+    'http://localhost:5322',
+    'http://gestor_clases_front:5321',
+    'http://gestor_clases_front:5322',
+    'https://serveriker.ddns.net:5321',
+    'https://serveriker.ddns.net:5322',
 ]
 
 app.add_middleware(

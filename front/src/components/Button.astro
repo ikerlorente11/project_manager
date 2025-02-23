@@ -1,18 +1,28 @@
 ---
-const { url, text, type, css, id, data_id, user_id, small } = Astro.props;
+const {
+    url,
+    text,
+    type = "submit",
+    style,
+    css,
+    id,
+    data_id,
+    user_id,
+} = Astro.props;
 ---
 
 {
     url ? (
-        <a href={url} class={`${type} ${css}`}>
+        <a href={url} class={`${style} ${css}`}>
             {text}
         </a>
     ) : (
         <button
+            type={type}
             id={id}
             data_id={data_id}
             user_id={user_id}
-            class={`${type} ${css}`}
+            class={`${style} ${css}`}
         >
             {text}
         </button>

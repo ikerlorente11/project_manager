@@ -1,8 +1,7 @@
 ---
 import { ClientRouter } from "astro:transitions";
 
-const BASE_URL = import.meta.env.BASE_URL;
-const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL;
+import { PUBLIC_API_BASE_URL, BASE_URL } from "astro:env/server";
 ---
 
 <!doctype html>
@@ -14,8 +13,18 @@ const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL;
 		<meta name="generator" content={Astro.generator} />
 		<title>Gestor Clases</title>
 		<ClientRouter />
+
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+			rel="stylesheet"
+		/>
 	</head>
-	<body data-base-url={BASE_URL} data-api-base-url={API_BASE_URL}>
+	<body
+		data-base-url={BASE_URL || "/"}
+		data-api-base-url={PUBLIC_API_BASE_URL}
+	>
 		<div class="container">
 			<slot />
 		</div>
@@ -23,8 +32,6 @@ const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL;
 </html>
 
 <style global>
-	@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-
 	:root {
 		--color-primary: #191a14;
 		--color-secondary: #f6f6f3;

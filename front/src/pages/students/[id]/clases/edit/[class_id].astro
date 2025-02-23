@@ -12,16 +12,16 @@ const { id, class_id } = Astro.params;
 let student = null;
 let current_class = null;
 
-const API_BASE_URL = import.meta.env.API_BASE_URL;
+import { SERVER_API_BASE_URL, BASE_URL } from "astro:env/server";
 
 try {
-    const response = await fetch(`${API_BASE_URL}/students?id=${id}`);
+    const response = await fetch(`${SERVER_API_BASE_URL}students?id=${id}`);
     if (response.ok) {
         student = await response.json();
 
         try {
             const response = await fetch(
-                `${API_BASE_URL}/classes?id=${class_id}`,
+                `${SERVER_API_BASE_URL}classes?id=${class_id}`,
             );
             if (response.ok) {
                 current_class = await response.json();
@@ -40,7 +40,7 @@ try {
 ---
 
 <Layout>
-    <Back url=`${import.meta.env.BASE_URL}students/${id}` />
+    <Back url=`${BASE_URL || "/"}students/${id}` />
     <Header name={student.name} price={student.price} />
     <ClassForm
         user_id={id}

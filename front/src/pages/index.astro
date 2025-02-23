@@ -3,10 +3,11 @@ import Student from "../components/Student.astro";
 import Button from "../components/Button.astro";
 import Layout from "../layouts/Layout.astro";
 
-const API_BASE_URL = import.meta.env.API_BASE_URL;
+export const prerender = false;
 
-// Hacer la petición al backend para obtener los estudiantes
-const response = await fetch(`${API_BASE_URL}/students`);
+import { SERVER_API_BASE_URL, BASE_URL } from "astro:env/server";
+
+const response = await fetch(`${SERVER_API_BASE_URL}students`);
 const students = await response.json();
 ---
 
@@ -15,9 +16,9 @@ const students = await response.json();
 		{students.map((student) => <Student {...student} />)}
 	</div>
 	<Button
-		url=`${import.meta.env.BASE_URL}students/new`
+		url=`${BASE_URL || "/"}students/new`
 		text="Nuevo usuario"
-		type="default"
+		style="default"
 		css="mb-1 mt-1"
 	/>
 </Layout>

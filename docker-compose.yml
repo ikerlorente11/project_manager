@@ -10,7 +10,7 @@ services:
       - MYSQL_USER=root
       - MYSQL_PASSWORD=password
     ports:
-      - '8000:8000'
+      - '8001:8000'
     restart: unless-stopped
     depends_on:
       db:
@@ -20,22 +20,33 @@ services:
     volumes:
       - ./api:/app
 
-  front:
+  front_dev:
     build:
       context: ./front
-    container_name: gestor_clases_front
-    environment:
-      - ENV=local
-      - PUBLIC_BASE_URL=/project_manager
-      - API_BASE_URL=http://gestor_clases_api:8000/project_manager_api
-      - PUBLIC_API_BASE_URL=http://localhost:8000/project_manager_api
+    container_name: gestor_clases_front_dev
     ports:
-      - '3000:4321'
+      - '5322:4321'
     restart: unless-stopped
     networks:
       - gestor_clases
     volumes:
       - ./front:/app
+
+  front:
+    build:
+      context: ./front
+    container_name: gestor_clases_front_prod
+    working_dir: /app
+    ports:
+      - '5321:4321'
+    restart: unless-stopped
+    depends_on:
+      - api
+    networks:
+      - gestor_clases
+    volumes:
+      - ./front:/app
+    command: sh -c "npm install && npm run build && npm run preview"
 
   db:
     image: mysql

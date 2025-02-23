@@ -1,13 +1,13 @@
 ---
 import Button from "./Button.astro";
 
-const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL;
+import { PUBLIC_API_BASE_URL } from "astro:env/server";
 
 const { student } = Astro.props;
 const method = student ? "PUT" : "POST";
 const url = student
-    ? `${API_BASE_URL}/students/${student.id}`
-    : `${API_BASE_URL}/students`;
+    ? `${PUBLIC_API_BASE_URL}students/${student.id}`
+    : `${PUBLIC_API_BASE_URL}students`;
 ---
 
 <form id="studentForm" method={method} action={url}>
@@ -29,31 +29,32 @@ const url = student
     <div class="btn-group">
         {
             student ? (
-                <Button text="Guardar" type="default" css="small fill-available" />
+                <Button id="saveUser" type="button" text="Guardar" style="default" css="small fill-available" />
                 <Button
                     id="deleteUser"
                     text="Borrar"
-                    type="error"
+                    type="button"
+                    style="error"
                     data_id={student.id}
                     css="small fill-available"
                 />
             ):
-            <Button text="Guardar" type="default" />
+            <Button id="saveUser" type="button" text="Guardar" style="default" />
         }
     </div>
 </form>
 
 <script defer>
-    document
-        .getElementById("studentForm")
-        .addEventListener("submit", async function (event) {
+    document.getElementById("saveUser").addEventListener("click", async function (event) {
             event.preventDefault();
 
-            const formData = new FormData(this);
+            const form = document.getElementById("studentForm")
+
+            const formData = new FormData(form);
             const jsonData = Object.fromEntries(formData.entries());
 
-            const method = this.method == "post" ? "POST" : "PUT";
-            const action = this.action;
+            const method = form.method == "post" ? "POST" : "PUT";
+            const action = form.action;
 
             try {
                 const response = await fetch(action, {
@@ -66,7 +67,7 @@ const url = student
 
                 if (response.ok) {
                     const baseUrl = document.body.getAttribute("data-base-url");
-                    if (this.method == "post") {
+                    if (form.method == "post") {
                         console.log("Estudiante guardado exitosamente.");
                         window.location.href = `${baseUrl}`;
                     } else {
@@ -82,43 +83,43 @@ const url = student
             }
         });
 
-    document.addEventListener("DOMContentLoaded", function () {
-        if (document.getElementById("deleteUser")) {
-            document
-                .getElementById("deleteUser")
-                .addEventListener("click", async function () {
-                    const id = this.getAttribute("data_id");
-                    try {
-                        const apiBaseUrl =
-                            document.body.getAttribute("data-api-base-url");
+    if (document.getElementById("deleteUser")) {
+        document
+            .getElementById("deleteUser")
+            .addEventListener("click", async function (event) {
+                event.preventDefault();
 
-                        const response = await fetch(
-                            `${apiBaseUrl}/students/${id}`,
-                            {
-                                method: "DELETE",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
+                const id = this.getAttribute("data_id");
+                try {
+                    const apiBaseUrl =
+                        document.body.getAttribute("data-api-base-url");
+
+                    const response = await fetch(
+                        `${apiBaseUrl}students/${id}`,
+                        {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json",
                             },
-                        );
+                        },
+                    );
 
-                        if (response.ok) {
-                            const baseUrl =
-                                document.body.getAttribute("data-base-url");
-                            console.log("Usuario eliminado exitosamente.");
-                            window.location.href = `${baseUrl}`;
-                        } else {
-                            console.error(
-                                "Error al eliminar usuario:",
-                                await response.text(),
-                            );
-                        }
-                    } catch (error) {
-                        console.error("Error en la petición:", error);
+                    if (response.ok) {
+                        const baseUrl =
+                            document.body.getAttribute("data-base-url");
+                        console.log("Usuario eliminado exitosamente.");
+                        window.location.href = `${baseUrl}`;
+                    } else {
+                        console.error(
+                            "Error al eliminar usuario:",
+                            await response.text(),
+                        );
                     }
-                });
-        }
-    });
+                } catch (error) {
+                    console.error("Error en la petición:", error);
+                }
+            });
+    }
 </script>
 
 <style>
