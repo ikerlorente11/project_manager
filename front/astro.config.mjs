@@ -1,7 +1,10 @@
 import { defineConfig, envField } from 'astro/config';
 import node from '@astrojs/node';
+import dotenv from 'dotenv'; // Importamos dotenv
 
+dotenv.config();
 const base = process.env.BASE_URL;
+console.log('BASE: ', base)
 
 export default defineConfig({
     base: base,
