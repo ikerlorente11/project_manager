@@ -1,7 +1,7 @@
-# Project: Gestor Clases
+# Project: Project Manager
 
 ## Description
-Este proyecto tiene el fin de la gestión de clases impartidas a estudiantes para controlar las horas impartidas y los gastos generados de ellas.
+Este proyecto tiene el fin de la gestión de proyectos para controlar las horas empleadas y los gastos generados de ellas.
 
 Este proyecto es una aplicación web desarrollada utilizando **Astro** (para el desarrollo del front), **Mysql** (como base de datos), **Flask-Migrate** (para el manejo de migraciones) y **FastAPI** (para el desarrollo de APIs). El objetivo de esta aplicación es proporcionar una solución robusta para manejar datos y servicios REST.
 
@@ -12,8 +12,8 @@ FastApi_Flask/
 ├── api
 │   ├── Dockerfile
 │   ├── controllers
-│   │   ├── ClassController.py
-│   │   ├── StudentController.py
+│   │   ├── ProjectController.py
+│   │   └── RegistryController.py
 │   ├── database.py
 │   ├── main.py
 │   ├── migrations
@@ -22,10 +22,10 @@ FastApi_Flask/
 │   │   ├── env.py
 │   │   ├── script.py.mako
 │   │   └── versions
-│   │       ├── 24a5c03010f7_initial_migration.py
+│   │       └── b36ad629490c_initial_migration.py
 │   ├── models
-│   │   ├── Class.py
-│   │   ├── Student.py
+│   │   ├── Project.py
+│   │   └── Registry.py
 │   ├── requirements.txt
 │   └── wait-for-db.sh
 ├── docker-compose.yml
@@ -44,20 +44,20 @@ FastApi_Flask/
     │   ├── components
     │   │   ├── Back.astro
     │   │   ├── Button.astro
-    │   │   ├── ClassForm.astro
     │   │   ├── Header.astro
+    │   │   ├── Project.astro
+    │   │   ├── ProjectForm.astro
     │   │   ├── Registry.astro
-    │   │   ├── Student.astro
-    │   │   └── StudentForm.astro
+    │   │   └── RegistryForm.astro
     │   ├── layouts
     │   │   └── Layout.astro
     │   └── pages
     │       ├── index.astro
-    │       └── students
+    │       └── projects
     │           ├── [id]
-    │           │   └── clases
+    │           │   └── registry
     │           │       ├── edit
-    │           │       │   └── [class_id].astro
+    │           │       │   └── [registry_id].astro
     │           │       └── new.astro
     │           ├── [id].astro
     │           ├── edit
@@ -68,35 +68,39 @@ FastApi_Flask/
 ```
 
 ## Servicios
-### 1. Front
+### 1. Front Prod
+   - Tecnología: Node
+   - Puerto: 5321
+
+### 1. Front Dev
    - Tecnología: Astro
-   - Puerto: 3000
+   - Puerto: 5322
 
-### 2. API
+### 3. API
    - Tecnología: Python
-   - Puerto: 8000
+   - Puerto: 8001
 
-### 3. Base de datos
+### 4. Base de datos
    - Tecnología: MySQL
-   - Puerto: 3306
+   - Puerto: 3307
 
 ## Estructura de case de datos
-1. Students
+1. Projects
 
    ```
-   Students
-        name: string(50) (Nombre del estudiante)
+   Projects
+        name: string(50) (Nombre del proyecto)
         price: int (Precio por hora)
    ```
 
-2. Classes
+2. Registries
 
    ```
-   Classes
-        date: date (Fecha de la clase)
-        time: int (Tiempo de duración de la clase en minutos)
-        price: int (Precio por hora de la clase en el momento en que se llevo a cabo)
-        paid: boolean (Clase pagada)
+   Registries
+        date: date (Fecha del registro)
+        time: int (Tiempo de duración del registro en minutos)
+        price: int (Precio por hora del registro en el momento en que se llevo a cabo)
+        paid: boolean (Registro pagado)
    ```
 
 ## Requisitos previos
@@ -111,11 +115,13 @@ FastApi_Flask/
 
 2. Configurar los puertos si es necesario en el docker-compose
 
-3. Navegar hasta la carpeta del proyecto creada y despliega el contenedor:
+3. Configurar variables de entorno en los ficheros .env
+
+4. Navegar hasta la carpeta del proyecto creada y despliega el contenedor:
 
    ```
-   cd gestor_clases
+   cd project_manager
    docker-compose up -d
    ```
 
-4. Abrir un navegador web y acceder a la aplicación en la dirección `http://localhost:3000`.
+5. Abrir un navegador web y acceder a la aplicación en la dirección `http://localhost:5321`.

@@ -1,2 +1,3 @@
+.env
 api/migrations
 front/node_modules
