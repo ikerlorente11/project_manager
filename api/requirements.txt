@@ -7,3 +7,4 @@ python-dotenv
 cryptography
 pymysql
 python-multipart
+python-dotenv

@@ -2,6 +2,9 @@ import os
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Configuración de la base de datos
 user = os.getenv("MYSQL_USER", "default_user")
@@ -65,7 +68,7 @@ def seed():
 
 # Crear el evento de MySQL para resetear la base de datos
 def create_mysql_event():
-    env = os.getenv('ENV', 'production')
+    demo = os.getenv('DEMO', 'production')
 
     with db.engine.connect() as connection:
         with connection.connection.cursor() as cursor:
@@ -101,7 +104,7 @@ def create_mysql_event():
             """)
             print("✅ Evento de MySQL programado para ejecutarse a las 00:00.")
 
-            if env != 'demo':
+            if demo != "1":
                 cursor.execute("ALTER EVENT reset_database_event DISABLE;")
                 print("Deshabilitado reset")
 

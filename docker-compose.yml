@@ -3,12 +3,6 @@ services:
     build:
       context: ./api
     container_name: gestor_clases_api
-    environment:
-      - ENV=demo
-      - FLASK_APP=database
-      - MYSQL_DATABASE=data
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=password
     ports:
       - '8001:8000'
     restart: unless-stopped
