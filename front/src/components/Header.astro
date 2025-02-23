@@ -1,18 +1,21 @@
 ---
+// Destructure the 'name' and 'price' properties from the Astro.props object
 const { name, price } = Astro.props;
 ---
 
-<div class="student-details">
+<!-- Container for project details -->
+<div class="project-details">
+    <!-- Heading displaying the project name and price per hour -->
     <h1>{name} {price}€/h</h1>
 </div>
 
 <style>
-    .student-details {
+    .project-details {
         padding: 0.5rem 2rem;
         text-align: center;
     }
 
-    .student-details h1 {
+    .project-details h1 {
         margin: 0;
         text-transform: capitalize;
         text-align: end;

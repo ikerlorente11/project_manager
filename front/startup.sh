@@ -1,6 +1,6 @@
 #!/bin/sh
-# Instalar dependencias
+# Install dependencies
 npm install
 
-# Ejecutar el servidor de desarrollo de Astro
+# Ejecute Astro server in development mode
 npm run dev -- --host 0.0.0.0

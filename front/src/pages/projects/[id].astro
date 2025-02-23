@@ -1,0 +1,161 @@
+---
+// Import necessary components and layouts
+import Layout from '../../layouts/Layout.astro';       // Layout component for consistent page structure
+import Button from "../../components/Button.astro";    // Button component for various actions
+import Registry from "../../components/Registry.astro"; // Component to display individual registry entries
+import Header from "../../components/Header.astro";     // Header component for displaying project information
+import Back from "../../components/Back.astro";         // Back button component for navigation
+
+// Enable Server-Side Rendering (SSR)
+export const prerender = false; 
+
+// Get the project ID from the URL parameters
+const { id } = Astro.params; 
+
+let project = null; // Initialize project variable
+let unpaid = '';    // Initialize unpaid status variable
+
+// Import environment variables for API base URLs
+import { SERVER_API_BASE_URL, BASE_URL } from "astro:env/server";
+
+// Fetch project data from the server
+try {
+	const response = await fetch(`${SERVER_API_BASE_URL}projects?id=${id}`); // Make a GET request to fetch the project by ID
+	if (response.ok) {
+		project = await response.json(); // Parse the response as JSON
+		unpaid = project.total_price > 0 ? 'unpaid' : ''; // Determine if the project has an unpaid status
+	} else {
+		console.error('Error: Proyecto no encontrado'); // Log error if project is not found
+	}
+} catch (error) {
+	console.error('Error obteniendo proyecto:', error); // Log any errors that occur during the fetch
+}
+---
+
+<!-- Main layout for the page -->
+<Layout>
+	{project ? ( // Check if the project data was successfully fetched
+		<Back url=`${BASE_URL || "/"}` />
+		<Header name={project.name} price={project.price} />
+		<div class="project-details">
+			<p>Deuda: <span class={unpaid}>{project.total_price.toFixed(2)}€</span></p>
+			<div class="project-btns">
+				<Button url={`${BASE_URL || "/"}projects/edit/${id}`} text="Editar" style="default" css="fill-available" />
+				<Button text="Liquidar" type="button" style="default" id="liquidarBtn" data_id={id} css="fill-available" />
+			</div>
+		</div>
+		<h2>Registros</h2>
+		<div class="list">
+			{project.registries.map((cls) => (
+				<Registry id={cls.id} project_id={id} date={cls.date} time={cls.time} price={cls.price} paid={cls.paid} />
+			))}
+		</div>
+		<Button
+		url=`${BASE_URL || "/"}projects/${id}/registry/new`
+		text="Nuevo registro"
+		style="default"
+		css="mb-1 mt-1"
+	/>
+	) : (
+		<p>Proyecto no encontrado.</p>
+	)}
+</Layout>
+
+<script defer>
+	// Add an event listener to the "Liquidar" button for processing payment
+	document.getElementById("liquidarBtn").addEventListener("click", async function () {
+		// Get the project ID from the button's data attribute
+		const id = this.getAttribute("data-id");
+		// Pay registries
+		try {
+			// Get the API base URL from the document body attribute
+			const apiBaseUrl =
+					document.body.getAttribute("data-api-base-url");
+
+			// Make a PUT request to the server to mark the project as paid
+			const response = await fetch(`${apiBaseUrl}projects/pay/${id}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			// Check if the response is successful
+			if (response.ok) {
+				const baseUrl = document.body.getAttribute("data-base-url");
+				console.log("Pago realizado exitosamente.");
+				window.location.href = `${baseUrl}projects/${id}`;
+			} else {
+				console.error("Error en el pago:", await response.text());
+			}
+		} catch (error) {
+			console.error("Error en la petición:", error);
+		}
+	});
+</script>
+
+<style>
+	.add-class-button{
+		width: fit-content;
+		margin: 0 auto;
+		color: var(--color-primary);
+	}
+
+	.project-details {
+		padding: .5rem 2rem;
+		text-align: center;
+	}
+
+	.project-details h1 {
+		margin: 0;
+		text-transform: capitalize;
+		text-align: end;
+	}
+
+	.project-details p {
+		text-align: center;
+		font-size: 2rem;
+    	margin-top: 1rem;
+	}
+
+	.project-details button {
+		font-size: 1.5rem;
+		cursor: pointer;
+		margin-top: .5rem;
+		border: none;
+		background: var(--background-primary);
+		font-family: "Poppins", serif;
+		font-weight: 600;
+		padding: .3rem 1.5rem;
+		border-radius: 5px;
+		box-shadow: 0px 2px 7px 0px var(--background-dark);
+	}
+
+	.project-btns{
+		margin-top: 1rem;
+		gap: 2rem;
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.unpaid {
+        color: var(--color-error);
+    }
+
+	.list {
+		flex-grow: 1;
+		overflow-y: overlay;
+		display: flex;
+		flex-direction: column;
+		justify-content: start;
+		gap: .5rem;
+		padding: 7px 0;
+	}
+
+	h2{
+		text-align: center;
+		margin-top: .5rem;
+		font-weight: 600;
+	}
+</style>

@@ -1,8 +1,11 @@
 ---
+// Destructure the 'url' property from the Astro.props object
 const { url } = Astro.props;
 ---
 
+<!-- Anchor element that serves as a back button -->
 <a href={url} class="back-button">
+    <!-- SVG icon representing a left chevron (back arrow) -->
     <svg
         xmlns="http://www.w3.org/2000/svg"
         width="40"

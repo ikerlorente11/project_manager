@@ -1,0 +1,352 @@
+---
+// Import the Button component from the Button.astro file
+import Button from "./Button.astro";
+
+// Import the PUBLIC_API_BASE_URL constant from the Astro environment
+import { PUBLIC_API_BASE_URL } from "astro:env/server";
+
+// Destructure properties from Astro.props
+const { project_id, price, current_registry } = Astro.props;
+
+// Determine the HTTP method based on the presence of the current_registry
+// If current_registry exists, use "PUT" for updating; otherwise, use "POST" for creating
+const method = current_registry ? "PUT" : "POST";
+
+// Construct the URL for the API request based on whether a current_registry exists
+const url = current_registry
+    ? `${PUBLIC_API_BASE_URL}registries/${current_registry.id}`  // URL for updating an existing registry
+    : `${PUBLIC_API_BASE_URL}registries`;                        // URL for creating a new registry
+
+// Initialize variables for hours and minutes
+let hour = 0;
+let minutes = 0;
+
+// If current_registry exists, calculate hours and minutes from the total time
+if (current_registry) {
+    hour = Math.trunc(current_registry.time / 60); // Get the whole hours
+    minutes = current_registry.time - hour * 60;    // Calculate the remaining minutes
+}
+console.log('registry: ', current_registry);
+---
+
+<!-- Form for creating or updating a registry -->
+<form id="registryForm" method={method} action={url}>
+    <!-- Hidden input to store the project ID -->
+    <input type="hidden" name="project_id" value={project_id} />
+    <!-- Input field for the date of the registry entry -->
+    <input
+        type="date"
+        name="date"
+        value={current_registry?.date || new Date().toISOString().split("T")[0]}
+        required
+    />
+    <!-- Container for time input fields -->
+    <div class="time">
+        <input
+            id="hours"
+            type="number"
+            name="hours"
+            placeholder="Horas"
+            value={hour}
+            required
+        />:
+        <input
+            id="minutes"
+            type="number"
+            name="minutes"
+            placeholder="Minutos"
+            value={minutes}
+            required
+        />
+    </div>
+    <!-- Container for time adjustment buttons -->
+    <div class="time-buttons">
+        <div>
+            <Button id="btn-1h" text="+1h" style="default" css="fill-available small" />
+            <Button id="btn-4h" text="+4h" style="default" css="fill-available small" />
+        </div>
+        <div>
+            <Button id="btn-10m" text="+10'" style="default" css="fill-available small" />
+            <Button id="btn-30m" text="+30'" style="default" css="fill-available small" />
+        </div>
+    </div>
+    <!-- Input field for the price per hour -->
+    <input
+        type="number"
+        name="price"
+        placeholder="Precio hora"
+        value={current_registry?.price || price}
+        required
+    />
+    <!-- Radio buttons for payment status -->
+    <div class="radio-group">
+        <div>
+            <input
+                id="paid"
+                type="radio"
+                name="paid"
+                value="1"
+                checked={current_registry?.paid}
+            />
+            <label for="paid">Pagado</label>
+        </div>
+        <div>
+            <input
+                id="unpaid"
+                type="radio"
+                name="paid"
+                value="0"
+                checked={!current_registry?.paid}
+            />
+            <label for="unpaid">Sin pagar</label>
+        </div>
+    </div>
+    <!-- Container for the button group -->
+    <div class="btn-group">
+        {
+            current_registry ? (
+                <Button id="saveRegistry" text="Guardar" type="button" style="default" css="small fill-available" />
+                <Button
+                    id="deleteRegistry"
+                    type="button"
+                    text="Borrar"
+                    style="error"
+                    data_id={current_registry.id}
+                    project_id={project_id}
+                    css="small fill-available"
+                />
+            ) : (
+                <Button id="saveRegistry" type="button" text="Guardar" style="default" />
+            )
+        }
+    </div>
+</form>
+
+<script defer>
+    // Add an event listener to the "saveRegistry" button
+    document.getElementById("saveRegistry").addEventListener("click", async function (event) {
+        event.preventDefault(); // Prevent the default button behavior
+
+        // Get the form element by its ID
+        const form = document.getElementById("registryForm");
+
+        // Create a FormData object from the form
+        const formData = new FormData(form);
+        // Convert the FormData to a JSON object
+        let jsonData = Object.fromEntries(formData.entries());
+        // Calculate total time in minutes and add it to jsonData
+        jsonData["time"] = Number(jsonData.hours) * 60 + Number(jsonData.minutes);
+
+        // Determine the HTTP method based on the form's method attribute
+        const method = form.method == "post" ? "POST" : "PUT";
+        // Get the action URL from the form
+        const action = form.action;
+
+        try {
+            // Send a fetch request to the server with the form data
+            const response = await fetch(action, {
+                method: method, // Use the determined method (POST or PUT)
+                headers: {
+                    "Content-Type": "application/json", // Set the content type to JSON
+                },
+                body: JSON.stringify(jsonData), // Convert the JSON object to a string
+            });
+
+            // Check if the response is OK (status in the range 200-299)
+            if (response.ok) {
+                const baseUrl = document.body.getAttribute("data-base-url"); // Get the base URL from a data attribute
+                if (form.method == "post") {
+                    console.log("Registro guardado exitosamente."); // Log success message for saving
+                } else {
+                    console.log("Registro actualizado exitosamente."); // Log success message for updating
+                }
+                // Redirect to the project's page
+                window.location.href = `${baseUrl}projects/` + jsonData.project_id;
+            } else {
+                console.error("Error en la respuesta del servidor."); // Log error if response is not OK
+            }
+        } catch (error) {
+            console.error("Error en la petición:", error); // Log any errors that occur during the fetch
+        }
+    });
+
+    // Check if the "deleteRegistry" button exists before adding an event listener
+    if (document.getElementById("deleteRegistry")) {
+        // Add an event listener to the "deleteRegistry" button
+        document
+            .getElementById("deleteRegistry")
+            .addEventListener("click", async function () {
+                const id = this.getAttribute("data-id"); // Get the registry ID from the data attribute
+                const project_id = this.getAttribute("project-id"); // Get the project ID from the data attribute
+                try {
+                    // Get the API base URL from a data attribute on the body
+                    const apiBaseUrl = document.body.getAttribute("data-api-base-url");
+
+                    // Send a DELETE request to the server for the specified registry ID
+                    const response = await fetch(
+                        `${apiBaseUrl}registries/${id}`,
+                        {
+                            method: "DELETE", // Use the DELETE method
+                            headers: {
+                                "Content-Type": "application/json", // Set the content type to JSON
+                            },
+                        },
+                    );
+
+                    // Check if the response is OK (status in the range 200-299)
+                    if (response.ok) {
+                        const baseUrl = document.body.getAttribute("data-base-url"); // Get the base URL
+                        console.log("Registro eliminado exitosamente."); // Log success message for deletion
+                        // Redirect to the project's page
+                        window.location.href = `${baseUrl}projects/` + project_id;
+                    } else {
+                        console.error(
+                            "Error al eliminar registro:",
+                            await response.text(), // Log the error message from the server
+                        );
+                    }
+                } catch (error) {
+                    console.error("Error en la petición:", error); // Log any errors that occur during the fetch
+                }
+            });
+    }
+
+    // Add event listener for the "+1h" button to increment hours
+    document.getElementById("btn-1h").addEventListener("click", (event) => {
+        event.preventDefault(); // Prevent the default button behavior
+        const add = 1; // Amount to add (1 hour)
+        let hourInput = document.getElementById("hours"); // Get the hours input field
+        hourInput.value = Number(hourInput.value) + add; // Increment the hours
+    });
+    // Add event listener for the "+4h" button to increment hours
+    document.getElementById("btn-4h").addEventListener("click", (event) => {
+        event.preventDefault(); // Prevent the default button behavior
+        const add = 4; // Amount to add (4 hour)
+        let hourInput = document.getElementById("hours"); // Get the hours input field
+        hourInput.value = Number(hourInput.value) + add; // Increment the hours
+    });
+    // Add event listener for the "+10m" button to increment minutes
+    document.getElementById("btn-10m").addEventListener("click", (event) => {
+        event.preventDefault(); // Prevent the default button behavior
+        const add = 10; // Amount to add (10 minutes)
+        let minuteInput = document.getElementById("minutes"); // Get the minutes input field
+
+        // Increment the minutes
+        if (Number(minuteInput.value) + add >= 60) {
+            let hourInput = document.getElementById("hours");
+            hourInput.value = Number(hourInput.value) + 1;
+
+            minuteInput.value = Number(minuteInput.value) + add - 60;
+        } else {
+            minuteInput.value = Number(minuteInput.value) + add;
+        }
+    });
+    // Add event listener for the "+30m" button to increment minutes
+    document.getElementById("btn-30m").addEventListener("click", (event) => {
+        event.preventDefault(); // Prevent the default button behavior
+        const add = 30; // Amount to add (30 minutes)
+        let minuteInput = document.getElementById("minutes"); // Get the minutes input field
+
+        // Increment the minutes
+        if (Number(minuteInput.value) + add >= 60) {
+            let hourInput = document.getElementById("hours");
+            hourInput.value = Number(hourInput.value) + 1;
+
+            minuteInput.value = Number(minuteInput.value) + add - 60;
+        } else {
+            minuteInput.value = Number(minuteInput.value) + add;
+        }
+    });
+</script>
+
+<style>
+    form {
+        width: -webkit-fill-available;
+        max-width: 75%;
+        margin: 0 auto;
+        margin-top: 3rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    input {
+        border: none;
+        font-size: 1.3rem;
+        padding: 0.5rem;
+        border-radius: 3px;
+        background: var(--background-input);
+        width: -webkit-fill-available;
+    }
+
+    input:focus {
+        border: none;
+        outline: none;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+
+    .time {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 1.5rem;
+        margin-top: 0.7rem;
+    }
+
+    .time input {
+        width: 15%;
+    }
+
+    .time-buttons {
+        margin-top: .3rem;
+        margin-bottom: 0.7rem;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: .5rem;
+    }
+
+    .time-buttons > div {
+        display: flex;
+        width: -webkit-fill-available;
+        gap: .5rem;
+    }
+
+    .radio-group {
+        display: flex;
+        justify-content: space-between;
+        margin: 0.5rem 1rem 0 1rem;
+        font-size: 1.2rem;
+    }
+
+    .radio-group > div {
+        width: fit-content;
+    }
+
+    .radio-group,
+    .radio-group input,
+    .radio-group label {
+        cursor: pointer;
+    }
+
+    .radio-group input {
+        transform: scale(1.2);
+        width: fit-content;
+    }
+
+    .btn-group {
+        display: flex;
+        margin-top: 1rem;
+        gap: 2rem;
+    }
+</style>

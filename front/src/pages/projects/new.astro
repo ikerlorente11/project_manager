@@ -1,0 +1,36 @@
+---
+// Import necessary components and layouts
+import Layout from "../../layouts/Layout.astro"; // Layout component for consistent page structure
+import ProjectForm from "../../components/ProjectForm.astro"; // Component for the project form
+import Header from "../../components/Header.astro"; // Header component for displaying the page title or information
+import Back from "../../components/Back.astro"; // Back button component for navigation
+
+// Import the BASE_URL constant from the Astro environment
+import { BASE_URL } from "astro:env/server";
+---
+
+<!-- Main layout for the page -->
+<Layout>
+    <!-- Back button that navigates to the previous page or home -->
+    <Back url={`${BASE_URL || "/"}`} />
+    <!-- Use BASE_URL or fallback to root URL if BASE_URL is not defined -->
+
+    <!-- Header component with empty name and price props -->
+    <Header name={""} price={""} />
+    <!-- Placeholder values for name and price; these can be updated as needed -->
+
+    <!-- Project form for creating or editing a project -->
+    <ProjectForm />
+    <!-- Render the ProjectForm component -->
+</Layout>
+
+<style>
+    .back-button {
+        position: absolute;
+        color: var(--color-primary);
+    }
+
+    .back-button svg {
+        margin-top: 0.5rem;
+    }
+</style>

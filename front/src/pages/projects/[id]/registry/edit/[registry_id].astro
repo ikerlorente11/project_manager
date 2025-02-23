@@ -1,0 +1,62 @@
+---
+// Import necessary components and layouts
+import Layout from "../../../../../layouts/Layout.astro"; // Layout component for consistent page structure
+import Header from "../../../../../components/Header.astro"; // Header component for displaying project information
+import Back from "../../../../../components/Back.astro"; // Back button component for navigation
+import RegistryForm from "../../../../../components/RegistryForm.astro"; // Component for the registry form
+
+// Enable Server-Side Rendering (SSR)
+export const prerender = false;
+
+// Get the project ID and registry ID from the URL parameters
+const { id, registry_id } = Astro.params;
+
+let project = null; // Initialize project variable
+let current_registry = null; // Initialize current registry variable
+
+// Import environment variables for API base URLs
+import { SERVER_API_BASE_URL, BASE_URL } from "astro:env/server";
+
+// Fetch project data from the server
+try {
+    const response = await fetch(`${SERVER_API_BASE_URL}projects?id=${id}`); // Make a GET request to fetch the project by ID
+    if (response.ok) {
+        project = await response.json(); // Parse the response as JSON
+
+        // Fetch the current registry data from the server
+        try {
+            const response = await fetch(
+                `${SERVER_API_BASE_URL}registries?id=${registry_id}`, // Make a GET request to fetch the registry by ID
+            );
+            if (response.ok) {
+                current_registry = await response.json(); // Parse the response as JSON
+            } else {
+                console.error("Error: Registro no encontrado"); // Log error if registry is not found
+            }
+        } catch (error) {
+            console.error("Error obteniendo registro:", error); // Log any errors that occur during the fetch for the registry
+        }
+    } else {
+        console.error("Error: Proyecto no encontrado"); // Log error if project is not found
+    }
+} catch (error) {
+    console.error("Error obteniendo proyecto:", error); // Log any errors that occur during the fetch for the project
+}
+---
+
+<!-- Main layout for the page -->
+<Layout>
+    <!-- Back button that navigates to the project's page -->
+    <Back url={`${BASE_URL || "/"}projects/${id}`} />
+    <!-- Use BASE_URL or fallback to root URL if BASE_URL is not defined -->
+
+    <!-- Header displaying project name and price -->
+    <Header name={project.name} price={project.price} />
+
+    <!-- Registry form for creating or editing a registry, passing the project ID, price, and current registry data -->
+    <RegistryForm
+        project_id={id}
+        price={project.price}
+        current_registry={current_registry}
+    />
+</Layout>

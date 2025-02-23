@@ -1,20 +1,31 @@
 ---
-const { id, user_id, date, time, price, paid } = Astro.props;
+// Destructure properties from the Astro.props object
+const { id, project_id, date, time, price, paid } = Astro.props;
 
+// Import the BASE_URL constant from the Astro environment
 import { BASE_URL } from "astro:env/server";
 
+// Determine the type based on the 'paid' status
+// If 'paid' is true, set type to "paid"; otherwise, set it to "unpaid"
 const type = paid ? "paid" : "unpaid";
-const hour = Math.trunc(time / 60);
-const minutes = time - hour * 60;
+
+// Calculate the hour and minutes from the total time in minutes
+const hour = Math.trunc(time / 60); // Get the whole hours
+const minutes = time - hour * 60; // Calculate the remaining minutes
 ---
 
+<!-- Anchor element linking to the edit page for the registry entry -->
 <a
-    href=`${BASE_URL || "/"}students/${user_id}/clases/edit/${id}`
+    href={`${BASE_URL || "/"}projects/${project_id}/registry/edit/${id}`}
     class={`registry ${type}`}
 >
+    <!-- Display the date of the registry entry -->
     <span>{date}</span>
+    <!-- Display the price associated with the registry entry -->
     <span>{price}€</span>
+    <!-- Display the time in hours and minutes -->
     <span>{hour}h {minutes}m</span>
+    <!-- Display the total calculated price based on time spent, formatted to two decimal places -->
     <span>{(price * (time / 60)).toFixed(2)}€</span>
 </a>
 

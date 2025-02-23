@@ -1,4 +1,5 @@
 ---
+// Destructure properties from the Astro.props object
 const {
     url,
     text,
@@ -7,21 +8,22 @@ const {
     css,
     id,
     data_id,
-    user_id,
+    project_id,
 } = Astro.props;
 ---
 
-{
-    url ? (
+<!-- Conditional rendering based on the presence of the 'url' property -->{
+    url ? ( // If 'url' is provided, render an anchor element
         <a href={url} class={`${style} ${css}`}>
             {text}
         </a>
     ) : (
+        // If 'url' is not provided, render a button element
         <button
             type={type}
             id={id}
-            data_id={data_id}
-            user_id={user_id}
+            data-id={data_id}
+            project-id={project_id}
             class={`${style} ${css}`}
         >
             {text}

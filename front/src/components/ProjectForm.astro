@@ -1,0 +1,192 @@
+---
+// Import the Button component from the Button.astro file
+import Button from "./Button.astro";
+
+// Import the PUBLIC_API_BASE_URL constant from the Astro environment
+import { PUBLIC_API_BASE_URL } from "astro:env/server";
+
+// Destructure the 'project' property from the Astro.props object
+const { project } = Astro.props;
+
+// Determine the HTTP method based on the presence of the 'project'
+// If 'project' exists, use "PUT" for updating; otherwise, use "POST" for creating
+const method = project ? "PUT" : "POST";
+
+// Construct the URL for the API request based on whether a project exists
+const url = project
+    ? `${PUBLIC_API_BASE_URL}projects/${project.id}`  // URL for updating an existing project
+    : `${PUBLIC_API_BASE_URL}projects`;                // URL for creating a new project
+---
+
+<!-- Form for creating or updating a project -->
+<form id="projectForm" method={method} action={url}>
+    <!-- If the method is "PUT", include a hidden input for the project ID -->
+    {method === "PUT" && <input type="hidden" name="id" value={project?.id} />}
+    <!-- Input field for the project name -->
+    <input
+        type="text"
+        name="name"
+        placeholder="Nombre"
+        value={project?.name}
+        required
+    />
+    <!-- Input field for the project description -->
+    <input
+        type="number"
+        name="price"
+        placeholder="Precio hora"
+        value={project?.price}
+        required
+    />
+    <!-- Container for the button group -->
+    <div class="btn-group">
+        {
+            project ? ( // If a project exists, render buttons for saving and deleting
+                <Button id="saveProject" type="button" text="Guardar" style="default" css="small fill-available" />
+                <Button
+                    id="deleteProject"
+                    text="Borrar"
+                    type="button"
+                    style="error"
+                    data_id={project.id}
+                    css="small fill-available"
+                />
+            ): // If no project exists, render only the save button
+            <Button id="saveProject" type="button" text="Guardar" style="default" />
+        }
+    </div>
+</form>
+
+<script defer>
+    // Add an event listener to the "saveProject" button
+    document.getElementById("saveProject").addEventListener("click", async function (event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Get the form element by its ID
+        const form = document.getElementById("projectForm");
+
+        // Create a FormData object from the form
+        const formData = new FormData(form);
+        // Convert the FormData to a JSON object
+        const jsonData = Object.fromEntries(formData.entries());
+
+        // Determine the HTTP method based on the form's method attribute
+        const method = form.method == "post" ? "POST" : "PUT";
+        // Get the action URL from the form
+        const action = form.action;
+
+        try {
+            // Send a fetch request to the server with the form data
+            const response = await fetch(action, {
+                method: method, // Use the determined method (POST or PUT)
+                headers: {
+                    "Content-Type": "application/json", // Set the content type to JSON
+                },
+                body: JSON.stringify(jsonData), // Convert the JSON object to a string
+            });
+
+            // Check if the response is OK (status in the range 200-299)
+            if (response.ok) {
+                // Get the base URL from a data attribute on the body
+                const baseUrl = document.body.getAttribute("data-base-url");
+                if (form.method == "post") {
+                    console.log("Proyecto guardado exitosamente."); // Log success message for saving
+                    // Redirect to the base URL
+                    window.location.href = `${baseUrl}`;
+                } else {
+                    console.log("Proyecto actualizado exitosamente."); // Log success message for updating
+                    // Redirect to the project's page
+                    window.location.href = `${baseUrl}projects/` + jsonData.id;
+                }
+            } else {
+                console.error("Error en la respuesta del servidor."); // Log error if response is not OK
+            }
+        } catch (error) {
+            console.error("Error en la petición:", error); // Log any errors that occur during the fetch
+        }
+    });
+
+    // Check if the "deleteProject" button exists before adding an event listener
+    if (document.getElementById("deleteProject")) {
+        // Add an event listener to the "deleteProject" button
+        document
+            .getElementById("deleteProject")
+            .addEventListener("click", async function (event) {
+                event.preventDefault(); // Prevent the default button behavior
+
+                // Get the project ID from the data attribute
+                const id = this.getAttribute("data-id");
+                try {
+                    // Get the API base URL from a data attribute on the body
+                    const apiBaseUrl = document.body.getAttribute("data-api-base-url");
+
+                    // Send a DELETE request to the server for the specified project ID
+                    const response = await fetch(
+                        `${apiBaseUrl}projects/${id}`,
+                        {
+                            method: "DELETE", // Use the DELETE method
+                            headers: {
+                                "Content-Type": "application/json", // Set the content type to JSON
+                            },
+                        },
+                    );
+
+                    // Check if the response is OK (status in the range 200-299)
+                    if (response.ok) {
+                        const baseUrl = document.body.getAttribute("data-base-url");
+                        console.log("Proyecto eliminado exitosamente."); // Log success message for deletion
+                        // Redirect to the base URL
+                        window.location.href = `${baseUrl}`;
+                    } else {
+                        console.error(
+                            "Error al eliminar proyecto:",
+                            await response.text(), // Log the error message from the server
+                        );
+                    }
+                } catch (error) {
+                    console.error("Error en la petición:", error); // Log any errors that occur during the fetch
+                }
+            });
+    }
+</script>
+
+<style>
+    form {
+        width: -webkit-fill-available;
+        max-width: 75%;
+        margin: 0 auto;
+        margin-top: 3rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    input {
+        border: none;
+        font-size: 1.3rem;
+        padding: 0.5rem;
+        border-radius: 3px;
+        background: var(--background-input);
+    }
+
+    input:focus {
+        border: none;
+        outline: none;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+
+    .btn-group {
+        display: flex;
+        margin-top: 1rem;
+        gap: 2rem;
+    }
+</style>

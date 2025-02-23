@@ -4,111 +4,121 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 
+# Load environment variables from a .env file
 load_dotenv()
 
-# Configuración de la base de datos
+# Retrieve database credentials from environment variables
 user = os.getenv("MYSQL_USER", "default_user")
 password = os.getenv("MYSQL_PASSWORD", "default_password")
 database = os.getenv("MYSQL_DATABASE", "default_database")
-host = "db"
+host = "db"  # Hostname of the database
 
+# Initialize the Flask application
 flask_app = Flask(__name__)
+# Configure the database URI for SQLAlchemy
 flask_app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://{user}:{password}@{host}:3306/{database}"
 
-# Inicializar la base de datos y migraciones
+# Initialize SQLAlchemy and Flask-Migrate
 db = SQLAlchemy()
 db.init_app(flask_app)
 migrate = Migrate(flask_app, db)
 
-# Definición del modelo Student
-class Student(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
-    price = db.Column(db.Integer)
+# Definition of the Project model
+class Project(db.Model):
+    id = db.Column(db.Integer, primary_key=True)  # Project ID
+    name = db.Column(db.String(50))  # Project name
+    price = db.Column(db.Integer)  # Project price
 
-    # Relación con la tabla Classes (one-to-many)
-    classes = db.relationship('Class', backref='student', lazy=True, cascade="all, delete-orphan")
+    # One-to-many relationship with the Registry model
+    registries = db.relationship('Registry', backref='project', lazy=True, cascade="all, delete-orphan")
 
-# Definición del modelo Class
-class Class(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.Date)
-    time = db.Column(db.Integer)
-    price = db.Column(db.Integer)
-    paid = db.Column(db.Boolean)
+# Definition of the Registry model
+class Registry(db.Model):
+    id = db.Column(db.Integer, primary_key=True)  # Registry ID
+    date = db.Column(db.Date)  # Date of the registry
+    time = db.Column(db.Integer)  # Time associated with the registry
+    price = db.Column(db.Integer)  # Price of the registry
+    paid = db.Column(db.Boolean)  # Payment status
 
-    # Relación con Student (many-to-one)
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"), nullable=False)
+    # Foreign key referencing the Project model
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id', ondelete="CASCADE"), nullable=False)
 
-# SEEDERS
+# Function to seed initial data into the database
 def seed():
-    # Comprobar si ya existen estudiantes en la base de datos
-    if not Student.query.first():
-        student1 = Student(name="Alice", price=100)
-        student2 = Student(name="Bob", price=150)
+    # Check if there are already projects in the database
+    if not Project.query.first():
+        # Create test projects
+        project1 = Project(name="Project 1", price=100)
+        project2 = Project(name="Project 2", price=250)
 
-        db.session.add(student1)
-        db.session.add(student2)
+        # Add projects to the session and commit changes
+        db.session.add(project1)
+        db.session.add(project2)
         db.session.commit()
-        print("Estudiantes de prueba insertados correctamente.")
+        print("Test projects added successfully.")
 
-    # Comprobar si ya existen clases en la base de datos
-    if not Class.query.first():
-        class1 = Class(date="2025-02-12", time=10, price=50, paid=False, student_id=1)
-        class2 = Class(date="2025-02-13", time=14, price=60, paid=True, student_id=1)
-        class3 = Class(date="2025-02-14", time=9, price=55, paid=False, student_id=2)
-        class4 = Class(date="2025-02-15", time=16, price=70, paid=True, student_id=2)
+    # Check if there are already registries in the database
+    if not Registry.query.first():
+        # Create test registries
+        registry1 = Registry(date="2025-02-12", time=60, price=100, paid=False, project_id=1)
+        registry2 = Registry(date="2025-02-13", time=90, price=100, paid=True, project_id=1)
+        registry3 = Registry(date="2025-02-14", time=120, price=250, paid=False, project_id=2)
+        registry4 = Registry(date="2025-02-15", time=90, price=250, paid=True, project_id=2)
 
-        db.session.add(class1)
-        db.session.add(class2)
-        db.session.add(class3)
-        db.session.add(class4)
+        # Add registries to the session and commit changes
+        db.session.add(registry1)
+        db.session.add(registry2)
+        db.session.add(registry3)
+        db.session.add(registry4)
         db.session.commit()
-        print("Clases de prueba insertadas correctamente.")
+        print("Test registries added successfully.")
 
-# Crear el evento de MySQL para resetear la base de datos
+# Function to create a MySQL event that resets the database daily
 def create_mysql_event():
-    demo = os.getenv('DEMO', 'production')
+    demo = os.getenv('DEMO', 'production')  # Get the operating mode (demo or production)
 
+    # Connect to the database
     with db.engine.connect() as connection:
         with connection.connection.cursor() as cursor:
-            # 🔹 Habilitar el event_scheduler
+            # Enable the MySQL event scheduler
             cursor.execute("SET GLOBAL event_scheduler = ON;")
 
-            # 🔹 Crear el evento si no existe
+            # Create an event that runs daily
             cursor.execute("""
                 CREATE EVENT IF NOT EXISTS reset_database_event
                 ON SCHEDULE EVERY 1 DAY
                 STARTS TIMESTAMP(CONCAT(CURRENT_DATE, ' 00:00:00'))
                 DO
                 BEGIN
-                    DELETE FROM class;
-                    DELETE FROM student;
+                    DELETE FROM project;  -- Delete all projects
+                    DELETE FROM registry;  -- Delete all registries
 
-                    -- Reiniciar IDs
-                    ALTER TABLE class AUTO_INCREMENT = 1;
-                    ALTER TABLE student AUTO_INCREMENT = 1;
+                    -- Reset IDs
+                    ALTER TABLE project AUTO_INCREMENT = 1;
+                    ALTER TABLE registry AUTO_INCREMENT = 1;
 
-                    -- Insertar estudiantes de prueba
-                    INSERT INTO student (name, price) VALUES
-                        ('Alice', 100),
-                        ('Bob', 150);
+                    -- Insert test projects
+                    INSERT INTO project (name, price) VALUES
+                        ('Project 1', 100),
+                        ('Project 2', 250);
 
-                    -- Insertar clases de prueba
-                    INSERT INTO class (date, time, price, paid, student_id) VALUES
-                        ('2025-02-12', 10, 50, FALSE, 1),
-                        ('2025-02-13', 14, 60, TRUE, 1),
-                        ('2025-02-14', 9, 55, FALSE, 2),
-                        ('2025-02-15', 16, 70, TRUE, 2);
+                    -- Insert test registries
+                    INSERT INTO registry (date, time, price, paid, project_id) VALUES
+                        ('2025-02-12', 60, 100, FALSE, 1),
+                        ('2025-02-13', 90, 100, TRUE, 1),
+                        ('2025-02-14', 120, 250, FALSE, 2),
+                        ('2025-02-15', 90, 250, TRUE, 2);
                 END;
             """)
-            print("✅ Evento de MySQL programado para ejecutarse a las 00:00.")
+            print("✅ MySQL event scheduled to run at 00:00.")
 
+            # Disable the event if not in demo mode
             if demo != "1":
                 cursor.execute("ALTER EVENT reset_database_event DISABLE;")
-                print("Deshabilitado reset")
+                print("Reset event disabled")
 
+# Entry point of the application
 if __name__ == "__main__":
     with flask_app.app_context():
-        seed()  # Insertar datos iniciales si no existen
-        create_mysql_event()  # Crear el evento MySQL
+        seed()  # Seed initial data
+        create_mysql_event()  # Create the MySQL event

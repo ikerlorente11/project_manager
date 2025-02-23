@@ -1,20 +1,20 @@
-# Usa una imagen base de Node.js
+# Use a base image of Node.js
 FROM node:23-alpine
 
-# Establece el directorio de trabajo dentro del contenedor
+# Set the working directory inside the container to /app
 WORKDIR /app
 
-# Copia el archivo package.json y package-lock.json
+# Copy the package.json and package-lock.json files to the working directory
 COPY package*.json ./
 
-# Instala las dependencias
+# Install the dependencies specified in package.json
 RUN npm install
 
-# Copia todos los archivos del proyecto al contenedor
+# Copy all project files from the host to the container
 COPY . .
 
-# Expón el puerto en el que la app va a correr
+# Expose the port on which the application will run
 EXPOSE 3000
 
-# Ejecutar startup
+# Execute the startup script when the container starts
 CMD ["sh", "/app/startup.sh"]

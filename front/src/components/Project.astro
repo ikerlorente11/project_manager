@@ -1,23 +1,32 @@
 ---
+// Define an interface for the component's props
 export interface Props {
     id: number;
     name: string;
     total_price: number;
 }
 
+// Import the BASE_URL constant from the Astro environment
 import { BASE_URL } from "astro:env/server";
 
+// Destructure the 'id', 'name', and 'total_price' properties from the Astro.props object
 const { id, name, total_price } = Astro.props;
+
+// Determine the class name based on the total price
+// If total_price is greater than 0, set the class to "unpaid"; otherwise, set it to an empty string
 const unpaid = total_price > 0 ? "unpaid" : "";
 ---
 
-<a href={`${BASE_URL || "/"}students/${id}`} class="student">
+<!-- Anchor element linking to the project's details page -->
+<a href={`${BASE_URL || "/"}projects/${id}`} class="project">
+    <!-- Paragraph displaying the project name -->
     <p>{name}</p>
+    <!-- Paragraph displaying the total price, formatted to two decimal places, with a conditional class for unpaid projects -->
     <p class={unpaid}>{total_price.toFixed(2)}€</p>
 </a>
 
 <style>
-    .student {
+    .project {
         min-height: 65px;
         display: flex;
         justify-content: space-between;
@@ -33,12 +42,12 @@ const unpaid = total_price > 0 ? "unpaid" : "";
         transition: transform 200ms;
     }
 
-    .student:hover {
+    .project:hover {
         cursor: pointer;
         transform: scale(1.03);
     }
 
-    .student p {
+    .project p {
         text-transform: capitalize;
     }
 

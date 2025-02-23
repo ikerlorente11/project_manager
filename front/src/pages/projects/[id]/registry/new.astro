@@ -1,0 +1,43 @@
+---
+// Import necessary components and layouts
+import Layout from "../../../../layouts/Layout.astro"; // Layout component for consistent page structure
+import Header from "../../../../components/Header.astro"; // Header component for displaying project information
+import Back from "../../../../components/Back.astro"; // Back button component for navigation
+import RegistryForm from "../../../../components/RegistryForm.astro"; // Component for the registry form
+
+// Enable Server-Side Rendering (SSR)
+export const prerender = false;
+
+// Get the project ID from the URL parameters
+const { id } = Astro.params;
+
+let project = null; // Initialize project variable
+
+// Import environment variables for API base URLs
+import { SERVER_API_BASE_URL, BASE_URL } from "astro:env/server";
+
+// Fetch project data from the server
+try {
+    const response = await fetch(`${SERVER_API_BASE_URL}projects?id=${id}`); // Make a GET request to fetch the project by ID
+    if (response.ok) {
+        project = await response.json(); // Parse the response as JSON
+    } else {
+        console.error("Error: Proyecto no encontrado"); // Log error if project is not found
+    }
+} catch (error) {
+    console.error("Error obteniendo proyecto:", error); // Log any errors that occur during the fetch
+}
+---
+
+<!-- Main layout for the page -->
+<Layout>
+    <!-- Back button that navigates to the project's page -->
+    <Back url={`${BASE_URL || "/"}projects/${id}`} />
+    <!-- Use BASE_URL or fallback to root URL if BASE_URL is not defined -->
+
+    <!-- Header displaying project name and price -->
+    <Header name={project.name} price={project.price} />
+
+    <!-- Registry form for creating or editing a registry, passing the project ID and price -->
+    <RegistryForm project_id={id} price={project.price} />
+</Layout>
