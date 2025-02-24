@@ -20,7 +20,7 @@ export default defineConfig({
     },
     server: {
         headers: {
-        'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
+            'Permissions-Policy': 'geolocation=(), microphone=(), camera=(), attribution-reporting=(), run-ad-auction=(), private-state-token-redemption=(), private-state-token-issuance=(), browsing-topics=()',
         },
     },
 });
