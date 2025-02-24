@@ -18,9 +18,4 @@ export default defineConfig({
             PUBLIC_API_BASE_URL: envField.string({ context: 'server', access: 'public' }),
         },
     },
-    server: {
-        headers: {
-            'Permissions-Policy': 'geolocation=(), microphone=(), camera=(), attribution-reporting=(), run-ad-auction=(), private-state-token-redemption=(), private-state-token-issuance=(), browsing-topics=()',
-        },
-    },
 });
