@@ -9,7 +9,11 @@ import { PUBLIC_API_BASE_URL, BASE_URL } from "astro:env/server";
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link
+			rel="icon"
+			type="image/svg+xml"
+			href={`${BASE_URL || "/"}favicon.svg`}
+		/>
 		<meta name="generator" content={Astro.generator} />
 		<title>Project Manager</title>
 		<ClientRouter />
