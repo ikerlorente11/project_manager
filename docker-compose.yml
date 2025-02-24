@@ -6,6 +6,11 @@ services:
     ports:
       - '8001:8000'
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:8000/project_manager_api/" ]
+      interval: 10s
+      timeout: 5s
+      retries: 20
     depends_on:
       db:
         condition: service_healthy
@@ -20,6 +25,9 @@ services:
     container_name: project_manager_front_dev
     ports:
       - '5322:4321'
+    depends_on:
+      api:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - project_manager
@@ -35,7 +43,8 @@ services:
       - '5321:4321'
     restart: unless-stopped
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     networks:
       - project_manager
     volumes:
