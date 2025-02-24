@@ -12,6 +12,7 @@ export default defineConfig({
     env: {
         schema: {
             ENV: envField.string({ context: 'server', access: 'public' }),
+            DEMO: envField.boolean({ context: 'server', access: 'public' }),
             BASE_URL: envField.string({ context: 'server', access: 'public', optional: true }),
             SERVER_API_BASE_URL: envField.string({ context: 'server', access: 'public' }),
             PUBLIC_API_BASE_URL: envField.string({ context: 'server', access: 'public' }),
