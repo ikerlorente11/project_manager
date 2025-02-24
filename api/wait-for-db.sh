@@ -1,14 +1,19 @@
 #!/bin/sh
 set -e
 
+# Cargar las variables desde el .env
+if [ -f .env ]; then
+    export $(grep -v '^#' .env | xargs)
+fi
+
 # Wait until database is ready
 echo "Wait until MySQL is prepared..."
 
 until python -c "import pymysql, os; pymysql.connect(
-    host=os.getenv('MYSQL_HOST', 'db'), 
-    user=os.getenv('MYSQL_USER', 'root'), 
-    password=os.getenv('MYSQL_PASSWORD', 'password'), 
-    database=os.getenv('MYSQL_DATABASE', 'data')
+    host=os.getenv('MYSQL_HOST'), 
+    user=os.getenv('MYSQL_USER'), 
+    password=os.getenv('MYSQL_PASSWORD'), 
+    database=os.getenv('MYSQL_DATABASE')
 )" 2>/dev/null; do
     echo "MySQL not prepared. Waiting..."
     sleep 2

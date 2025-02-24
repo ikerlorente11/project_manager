@@ -8,10 +8,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Retrieve database credentials from environment variables
-user = os.getenv("MYSQL_USER", "default_user")
-password = os.getenv("MYSQL_PASSWORD", "default_password")
-database = os.getenv("MYSQL_DATABASE", "default_database")
-host = "db"  # Hostname of the database
+user = os.getenv("MYSQL_USER")
+password = os.getenv("MYSQL_PASSWORD")
+database = os.getenv("MYSQL_DATABASE")
+host = os.getenv("MYSQL_HOST")
 
 # Initialize the Flask application
 flask_app = Flask(__name__)
