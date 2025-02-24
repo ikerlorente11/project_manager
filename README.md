@@ -125,3 +125,7 @@ FastApi_Flask/
    ```
 
 5. Abrir un navegador web y acceder a la aplicación en la dirección `http://localhost:5321`.
+
+## Demo
+Puedes probar la demo en el siguiente enlace
+https://serveriker.ddns.net/project_manager/
