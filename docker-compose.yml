@@ -51,6 +51,23 @@ services:
       - ./front:/app
     command: sh -c "npm install && npm run build && npm run preview"
 
+  front-2:
+    build:
+      context: ./front-2
+      dockerfile: Dockerfile
+    container_name: project_manager_front_angular_dev
+    ports:
+      - '4201:4200' # Angular en desarrollo usa 4200 por defecto
+    restart: unless-stopped
+    # depends_on:
+    #   api:
+    #     condition: service_healthy
+    networks:
+      - project_manager
+    volumes:
+      - ./front-2:/app
+      - /app/node_modules
+
   db:
     image: mysql
     container_name: project_manager_db

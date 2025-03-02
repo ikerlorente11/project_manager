@@ -1,0 +1,7 @@
+<a *ngIf="url" [href]="url" [ngClass]="[css, style]" [id]="id" [attr.data-id]="data_id">
+    {{ text }}
+</a>
+<button *ngIf="!url" [type]="type" [id]="id" [attr.data-id]="data_id" [attr.project-id]="project_id"
+    [ngClass]="[css, style]">
+    {{ text }}
+</button>

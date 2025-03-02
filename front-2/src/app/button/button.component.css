@@ -1,0 +1,44 @@
+a,
+button {
+    display: block;
+    color: var(--color-primary);
+    width: fit-content;
+    margin: auto;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border: none;
+    font-family: "Poppins", serif;
+    font-weight: 600;
+    padding: 0.3rem 1.5rem;
+    border-radius: 5px;
+    box-shadow: 0px 2px 7px 0px var(--background-dark);
+    text-decoration: none;
+}
+
+.small {
+    padding: 0.3rem 1rem;
+}
+
+.mb-1 {
+    margin-bottom: 1rem;
+}
+
+.mt-1 {
+    margin-top: 1rem;
+}
+
+.w-25 {
+    width: 25%;
+}
+
+.fill-available {
+    width: -webkit-fill-available;
+}
+
+.default {
+    background: var(--background-primary);
+}
+
+.error {
+    background: var(--background-error);
+}

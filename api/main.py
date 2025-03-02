@@ -14,8 +14,10 @@ app = FastAPI()
 origins = [
     'http://localhost:5321',
     'http://localhost:5322',
-    'http://gestor_clases_front:5321',
-    'http://gestor_clases_front:5322',
+    'http://localhost:4201',
+    'http://project_manager_front:5321',
+    'http://project_manager_front:5322',
+    'http://project_manager_front_angular_dev:4201',
     'https://serveriker.ddns.net:5321',
     'https://serveriker.ddns.net:5322',
 ]

@@ -1,0 +1,18 @@
+<div class="projects">
+    <app-project *ngFor="let project of projects" [id]="project.id" [name]="project.name"
+        [total_price]="project.total_price" [unpaid]="project.total_price > 0 ? 'unpaid' : ''" />
+</div>
+
+<app-button [url]="baseUrl + 'project-new'" [text]="'Nuevo proyecto'" [style]="'default'" [css]="'mb-1 mt-1'" />
+
+<div *ngIf="demo" id="disclaimer" class="disclaimer visible">
+    <svg id="disclaimer-close" (click)="close()" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+        stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+    </svg>
+    <p>
+        Esto es una demo, todos los datos se resetearan a las 00:00
+    </p>
+</div>
+
+<router-outlet />
