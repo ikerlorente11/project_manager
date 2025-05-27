@@ -13,7 +13,7 @@ export class ButtonComponent {
   @Input() type: string = 'submit';
   @Input() style: string = 'default';
   @Input() css?: string;
-  @Input() id?: number;
+  @Input() id?: string;
   @Input() data_id?: number;
   @Input() project_id?: number;
 }

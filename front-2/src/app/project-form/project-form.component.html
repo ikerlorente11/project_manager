@@ -1,0 +1,52 @@
+<form id="projectForm">
+    <!-- If the method is "PUT", include a hidden input for the project ID -->
+    <input *ngIf="method === 'PUT'" type="hidden" name="id" [value]="project?.id">
+    <!-- Input field for the project name -->
+    <input
+        type="text"
+        name="name"
+        placeholder="Nombre"
+        value={{project?.name}}
+        required
+    />
+    <!-- Input field for the project description -->
+    <input
+        type="number"
+        name="price"
+        placeholder="Precio hora"
+        value={{project?.total_price}}
+        required
+    />
+    <!-- Container for the button group -->
+    <div class="btn-group">
+        <!-- If a project exists, show both Save and Delete buttons -->
+        <ng-container *ngIf="project; else saveButtonOnly">
+          <app-button
+            id="saveProject"
+            type="button"
+            [text]="'Guardar'"
+            [style]="'default'"
+            [css]="'small fill-available'"
+          ></app-button>
+      
+          <app-button
+            id="deleteProject"
+            type="button"
+            [text]="'Borrar'"
+            [style]="'error'"
+            [data_id]="project.id"
+            [css]="'small fill-available'"
+          ></app-button>
+        </ng-container>
+      
+        <!-- If no project exists, show only the Save button -->
+        <ng-template #saveButtonOnly>
+          <app-button
+            id="saveProject"
+            type="button"
+            [text]="'Guardar'"
+            [style]="'default'"
+          ></app-button>
+        </ng-template>
+    </div>
+</form>

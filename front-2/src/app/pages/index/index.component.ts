@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+import { Project} from '../../models/project';
 import { ProjectComponent } from '../../project/project.component';
 import { ButtonComponent } from '../../button/button.component';
 import { environment } from '../../../environments/environment';
@@ -14,7 +15,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 })
 export class IndexComponent implements OnInit {
   demo = false;
-  projects: any;
+  projects: Project[] = [];
   baseUrl = environment.baseUrl;
 
   constructor(private http: HttpClient) { }
@@ -25,9 +26,9 @@ export class IndexComponent implements OnInit {
         this.demo = true;
       }
 
-      this.http.get(environment.public_api_base_url + 'projects')
+      this.http.get<Project[]>(environment.public_api_base_url + 'projects')  // <-- Define expected type here
         .subscribe({
-          next: (response) => {
+          next: (response: Project[]) => {  // <-- Ensure TypeScript knows response is Project[]
             this.projects = response;
           },
           error: (error) => {

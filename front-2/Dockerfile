@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 4200
 
 # Comando para ejecutar Angular en desarrollo
-CMD ["ng", "serve"]
+CMD ["npx", "ng", "serve", "--host", "0.0.0.0"]

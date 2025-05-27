@@ -1,0 +1,10 @@
+.project-details {
+    padding: 0.5rem 2rem;
+    text-align: center;
+}
+
+.project-details h1 {
+    margin: 0;
+    text-transform: capitalize;
+    text-align: end;
+}

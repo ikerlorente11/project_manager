@@ -2,6 +2,6 @@
     {{ text }}
 </a>
 <button *ngIf="!url" [type]="type" [id]="id" [attr.data-id]="data_id" [attr.project-id]="project_id"
-    [ngClass]="[css, style]">
+    [ngClass]="[style, css || style]">
     {{ text }}
 </button>
